@@ -1,0 +1,166 @@
+﻿@model CheckinPortal.BackOffice.Models.SmartTap.OutletUser
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@section Styles{
+    <style>
+        .btn-group
+        {
+            background: #fefcf7;
+            border: 1px solid #e4dacd;
+            width: 100%;
+        }
+
+            .btn-group button
+            {
+                text-align: left;
+            }
+
+        .dropdown-toggle::after
+        {
+            vertical-align: middle;
+            float: right;
+            margin: 7px;
+        }
+    </style>
+}
+
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "OutletUserMaster", FormMethod.Post, new { @enctype = "multipart/form-data" ,@Id = "userform" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Outlet User Master</h4>
+    <hr />
+
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.Label("Outlet", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.HiddenFor(Model => Model.SelectedOutlets)
+        <div class="col-md-10">
+            <select id="outletname" name="outletname" multiple required="required">
+                @if (ViewBag.outlets != null)
+                {
+                    foreach (var item in ViewBag.Outlets)
+                    {
+                        if (item.OutletID != null)
+                        {
+                            <option value="@item.OutletID">
+                                @item.OutletName
+                            </option>
+
+                        }
+                    }
+                }
+
+            </select>
+           <label  id="lblerror" class="text-danger" style="display:none">Please select atleast one outlet</label>
+
+        </div>
+    </div>
+   
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" id="btnsubs" value="Create" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+<div class="modal model-cstm fade" id="messageModal" aria-hidden="true" aria-labelledby="modalMessageHeader" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMessageHeader">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="message">
+                    <p id="modalMessageContent">
+                        <label id="lblmessage">@ViewBag.Response</label>
+                    </p>
+                </div>
+                @*<div class="button-wrapper d-flex justify-content-center">
+                        <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Ok</button>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>*@
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="~/Assets/css/bootstrap-mutiselect.css" rel="stylesheet" />
+
+    <script src="~/Assets/js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript">
+          $(document).ready(function () {
+				@if(ViewBag.Response != null && ViewBag.Response != "")
+                {
+
+			<text>ShowResultModalPopup('@ViewBag.Response'); </text>
+
+						  }
+						});
+        $('#outletname').multiselect({
+            includeSelectAllOption: true
+        });
+        $("#btnsubs").click(function () {
+
+            var selectedval = $("#outletname").val();
+            if (selectedval == null || selectedval== '')
+        {
+            $("#lblerror").css('display', 'block');
+        }
+        else
+        {
+            $("#lblerror").css('display', 'none');
+        }
+            $("#SelectedOutlets").val(selectedval);
+
+            $("#userform").submit();
+        });
+        function ShowResultModalPopup(message) {
+            $("#messageModal").modal('show');
+        }
+    </script>
+}
+

@@ -1,0 +1,260 @@
+﻿@model CheckinPortal.BackOffice.DataAccess.Usp_GetRequestDetails_Result
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+    var ReservationDetails = (CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDetails_Result)ViewBag.ReservationDetails;
+}
+
+<!-- Row start -->
+<div class="row gutters">
+    <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6 col-6">
+        <div class="card h-200">
+            <div class="card-body">
+                <div class="account-settings">
+                    <div class="user-profile">
+                        <h5 class="user-name">Confirmation No:  @ReservationDetails.ReservationNumber</h5>
+                        <h5 class="user-name">Guest Name: @Model.FirstName</h5>
+                        <h5 class="user-name">Checkin Date : @(ReservationDetails.ArrivalDate != null ? ReservationDetails.ArrivalDate.Value.ToString("dd-MMM-yyyy") : "" )</h5>
+                        <h6 class="user-email">Adult/child : @ReservationDetails.Adultcount / @ReservationDetails.Childcount</h6>
+
+                    </div>
+                </div>
+                <div class="account-settings">
+                    <div class="user-profile">
+                        
+                        <h5 class="user-email">@Model.RequestType</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.PackageCode))
+    {
+        <div class="col-xl-2 col-lg-6 col-md-6 col-sm-6 col-6">
+            <div class="social-tile h-200">
+                <div class="social-icon">
+                    <i class="fa-sterling-sign"></i>
+                </div>
+                <div class="badge badge-info">
+                    @*<a target="_blank" href="@($"{System.Configuration.ConfigurationManager.AppSettings["SaavyBaseURL"].ToString()}/Portal/TransactionDetails?Reservationnameid={Model.ReservationNameID}&UID={Session["UserName"]}")" style="color:white" id="ChargeForRequset1">Pay</a>*@
+                    <a href="@Url.Action("OpenSaavyPay","Reservations",new {reservationID = Model.ReservationDetailID })" target="_blank" class="btn btn-primary" style="color:white" id="ChargeForRequset1">Pay</a>
+                </div>
+                <h3>@System.Configuration.ConfigurationManager.AppSettings["Currency"].ToString() @Model.PackageAmount</h3>
+            </div>
+        </div>
+    }
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="card h-200">
+            <div class="card-header">
+                <div class="card-title">Comments</div>
+            </div>
+            <div class="card-body">
+                <div class="share-thoughts-container">
+                    <form action="@Url.Action("UpdateStatus", "Requests")">
+                        @Html.HiddenFor(model => model.ReqDetailId)
+                        <textarea class="form-control" rows="3" id="commentsText" name="comments"> @Model.ReqUserComment </textarea>
+                        <div class="share-thoughts-footer">
+                            <div class="share-icons">
+                                @if (!string.IsNullOrEmpty(Model.PackageCode))
+                                {
+                                    if (!Model.ReqStatus != null && !Model.ReqStatus.Value)
+                                    {
+                                        <button type="submit" class="btn btn-primary acceptRequest" style=" margin-right: 10px;">Accept</button>
+                                        <button type="submit" class="btn btn-primary rejectRequest">Reject</button>
+                                    }
+                                }
+                            </div>
+                            @if (string.IsNullOrEmpty(Model.PackageCode))
+                            {
+                                if (!Model.ReqStatus != null && !Model.ReqStatus.Value)
+                                {
+                                    <button type="submit" class="btn btn-primary">Close Request</button>
+                                }
+
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(Model.PackageCode))
+                                {
+
+    <div class="row gutters">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card m-0">
+                <div class="card-header">
+                    <div class="card-title">List of Upsell Package requested</div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table projects-table">
+                            <thead>
+                                <tr>
+                                    <th>Package Code</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    @*<th>Payment Status</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="project-details">
+                                                @*<img src="img/user6.png" class="avatar" alt="Goldfinch Admin">*@
+                                                <div class="project-info">
+                                                    <p>@Model.PackageCode</p>
+                                                    <p>@Model.PackageName</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="project-details">
+                                                <div class="project-info">
+                                                    <p>@*@Model.PackageDesc.Substring(0, Math.Min(Model.PackageDesc.Length, 25))*@</p>
+                                                    <p>@Model.PackageDesc</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="project-details">
+                                                <div class="project-info">
+                                                    <p>@System.Configuration.ConfigurationManager.AppSettings["Currency"].ToString() @Model.PackageAmount</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        @*<td>
+                                            <div class="project-details">
+                                                <div class="project-info">
+
+                                                    <div class="status approved">
+                                                        <i class="icon-check_circle"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </td>*@
+                                    </tr>
+                    </tbody>
+                    </table>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section Scripts{
+
+
+    <script>
+
+    $(document).ready(function (e) {
+
+        $('#ChargeForRequset').on('click', function (e) {
+            e.preventDefault();
+            $("#loading-wrapper").fadeIn(800);
+            $.ajax({
+                url: "@Url.Action("ChargeReservationForPackage", "Requests")",
+                method:"POST",
+                data: {
+                    ReservationDetailID: "@Model.ReservationDetailID",
+                    RequestID: "@Model.ReqDetailId"
+                },
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(800);
+                    notes.show(data.Message, {
+                        type: 'success',
+                        title: 'Request',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+
+                    window.location.href = BaseURL +  "/Request/Index";
+
+                },
+                error: function (data) {
+                    $("#loading-wrapper").fadeOut(800);
+                    notes.show(data.Message, {
+                        type: 'danger',
+                        title: 'Request',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+                }
+            });
+        });
+
+        $('.acceptRequest').on('click', function (e) {
+            e.preventDefault();
+            $("#loading-wrapper").fadeIn(800);
+            $.ajax({
+                url: "@Url.Action("AcceptRequest", "Requests")",
+                method:"POST",
+                data: {
+                    ReservationDetailID: "@Model.ReservationDetailID",
+                    ReqDetailId: "@Model.ReqDetailId",
+                    Comments: $('#commentsText').val()
+                    
+                },
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(800);
+                    notes.show(data.message, {
+                        type: 'success',
+                        title: 'Request',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+                    window.location.href = BaseURL + "/Requests/Index";
+                },
+                error: function (data) {
+                    $("#loading-wrapper").fadeOut(800);
+                    notes.show(data.message, {
+                        type: 'danger',
+                        title: 'Request',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+                }
+            });
+        });
+
+        $('.rejectRequest').on('click', function (e) {
+            e.preventDefault();
+            $("#loading-wrapper").fadeIn(800);
+            $.ajax({
+                url: "@Url.Action("rejectRequest", "Requests")",
+                method: "POST",
+                data: {
+                    ReservationDetailID: "@Model.ReservationDetailID",
+                    ReqDetailId: "@Model.ReqDetailId",
+                    Comments: $('#commentsText').html()
+                },
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(800);
+                    notes.show(data.Message, {
+                        type: 'success',
+                        title: 'Request',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+                    window.location.href = BaseURL + "/Requests/Index";
+
+                },
+                error: function (data) {
+                    $("#loading-wrapper").fadeOut(800);
+                    notes.show(data.Message, {
+                        type: 'danger',
+                        title: 'Request',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+                }
+            });
+
+        });
+
+    });
+
+    </script>
+    }
+<!-- Row end -->

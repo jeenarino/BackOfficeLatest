@@ -1,0 +1,167 @@
+﻿@model IEnumerable<CheckinPortal.BackOffice.Models.SmartTap.OutletUser>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+}
+<h2>User List</h2>
+
+<p>
+    @Html.ActionLink("Create OutletUser", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table id="fixedHeader" class="table custom-table">
+    <thead>
+        <tr>
+            <th class="text-nowrap" scope="col">#</th>
+
+            <th>User Name</th>
+            <th>Created Date</th>
+            <th class="right-align">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+</table>
+
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+
+    <script>
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+        $(document).ready(function () {
+
+
+            $('#fixedHeader').on('error.dt', function(e, settings, techNote, message){
+                console.log('An error has been reported by DataTables: ', message );
+                e.preventDefault();
+            });
+
+
+
+            var dt = $('#fixedHeader').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": "@Url.Action("GetOutletUserListAjax", "OutletUserMaster")",
+                "createdRow": function (a, b, c) {
+
+
+                        $(a).find('td:first').addClass('dt-control');
+
+                },
+                "columns": [
+                     {
+                    "data": function () {
+                        return ""
+                    },
+                },
+                    { "data": "UserName" },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                                return formatDate(new Date(parseInt(row.CreatedDateTime.substr(6))));
+                            }
+                        },
+
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+
+                            var stat = '<div class="td-actions"><a href="@Url.Action("Edit", "OutletUserMaster")?id=' + row.ID+'" class="icon red" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Record"> ';
+                            stat += '<i class="icon-circle-with-plus"></i> </a>';
+
+                            stat += '<a href="@Url.Action("Details", "OutletUserMaster")?id=' + row.ID+'" class="icon green" data-toggle="tooltip" data-placement="top" title="" data-original-title="View Record">';
+                            stat += '<i class="icon-save"></i> </a>';
+
+                            stat += '<a href="@Url.Action("Delete", "OutletUserMaster")?id=' + row.ID +'" class="icon blue" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete Record">';
+                            stat += '<i class="icon-cancel" ></i> </a></div>';
+                            return stat;
+                        }
+
+                    }
+                ],
+                "order": [[0, 'desc']]
+            });
+
+
+
+       
+
+          $('#fixedHeader tbody').on('click', 'td.dt-control', function () {
+            var tr = $(this).closest('tr');
+              var row = dt.row(tr);
+           
+              //alert("fdsf")
+              
+                    // Open this row
+              if (row.child.isShown()) {
+                  // This row is already open - close it
+                  row.child.hide();
+                  tr.removeClass('shown');
+                  $(this).removeClass('dt-control dt-hasChild sorting_1')
+                  $(this).addClass('dt-control sorting_1')
+                 
+              }
+              else {
+                  $(this).removeClass('dt-control sorting_1')
+                  $(this).addClass('dt-control dt-hasChild sorting_1')
+                  row.child('<span>Loading data Please wait</span>').show();
+                  tr.addClass('shown');
+
+                  setTimeout(function () {
+                      $.ajax({
+                          url: "@Url.Action("GetOutletsDetails", "OutletUserMaster")",// + "?AuditID=" + row.data().AuditHeaderID,
+                          type: "POST",
+                          data: {
+                              'userid': row.data().ID
+                          },
+                          success: function (data) {
+
+                              //Replace child row data.
+                              row.child(data).show();
+                          },
+                          error: function (error) {
+
+                          }
+                      });
+                  }, 1000);
+              }
+
+                
+            
+        });
+
+        });
+
+
+
+
+
+    </script>
+}
+
+

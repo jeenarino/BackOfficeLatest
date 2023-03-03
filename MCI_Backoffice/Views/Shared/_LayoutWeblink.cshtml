@@ -1,0 +1,65 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="Webcheckin for hotels">
+    <meta name="author" content="Webcheckin">
+    <link rel="shortcut icon" href="img/fav.png" />
+    <!-- Title -->
+    <title>Backoffice Module</title>
+    <link rel="stylesheet" href="~/Assets/css/bootstrap.min.css">
+    <!-- Icomoon Font Icons css -->
+    <link rel="stylesheet" href="~/Assets/fonts/style.css">
+    <!-- Main css -->
+    <link rel="stylesheet" href="~/Assets/css/main.css">
+    <style>
+        .isDisabled {
+            color: currentColor;
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-decoration: none;
+        }
+    </style>
+    @RenderSection("Styles", false);
+
+</head>
+
+<body>
+
+    <!-- Loading starts -->
+    <div id="loading-wrapper">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Loading ends -->
+    <!-- Page wrapper start -->
+    <div class="page-wrapper">
+        <!-- Page content start  -->
+        <div class="page-content" style="padding: 0 0 0 0px;">
+            <!-- Main container start -->
+            <div class="main-container">
+                @RenderBody()
+            </div>
+            <!-- Main container end -->
+        </div>
+        <!-- Page content end -->
+    </div>
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <script src="~/Assets/js/jquery.min.js"></script>
+    <script src="~/Assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Assets/js/moment.js"></script>
+    <script src="~/Assets/vendor/slimscroll/slimscroll.min.js"></script>
+    <script src="~/Assets/vendor/slimscroll/custom-scrollbar.js"></script>
+
+    @RenderSection("Scripts", false);
+
+    <!-- Main JS -->
+    <script src="~/Assets/js/main.js"></script>
+
+</body>
+</html>

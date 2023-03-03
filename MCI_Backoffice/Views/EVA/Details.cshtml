@@ -1,0 +1,119 @@
+﻿@model CheckinPortal.BackOffice.Models.EVAImageVerification
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+
+@section Styles{
+    <style>
+        .page-header
+        {
+            /*margin: 0 0 -65px 0 !important;*/
+        }
+
+        .value-label
+        {
+            font-size: 14px;
+        }
+    </style>
+
+    <link href="~/Assets/vendor/imagezoom/imagepanner.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+}
+<form name="EVAForm" id="EVAForm" method="post" action="@Url.Action("SendEVA","EVA")?ResponseId=@Model.ResponseID">
+    @Html.AntiForgeryToken()
+    <div>
+
+    </div>
+    <div class="form-horizontal">
+
+
+
+        <div class="user-profile">
+            <h4>Confirmation No</h4>
+            <h5 class="user-name"> @Model.ReservationNumber</h5>
+        </div>
+
+        <div class="baguetteBoxThree gallery">
+            <div class="row gutters">
+                @if (Model != null)
+                {
+
+                    if (Model.DocumentImage1 != null)
+                    {
+                        <div style="flex:auto;">
+                            <div class="col-sm-4 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer1">
+                                <img src="~/temp/@ViewBag.DocumentPath1" class="img-fluid1" alt="Swissotel" id="docImage1"
+                                     style="height:190px;width:300px">
+
+                            </div>
+                            <label>Uploaded Image</label>
+                        </div>
+                    }
+
+                    @*if (Model.DocumentImage2 != null)
+                    {
+                        <div style="flex:auto;">
+                            <div class="col-sm-4 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer2">
+                                <img src="~/temp/@ViewBag.DocumentPath2" class="img-fluid1" alt="Swissotel" id="docImage2" style="height:190px;width:300px">
+
+                            </div>
+
+                            <label style="text-align: center;margin-left: 120px;">Uploaded Image</label>
+                        </div>
+                    }
+
+                    if (Model.DocumentImage3 != null)
+                    {
+
+                        <div class="col-sm-4 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer3">
+
+                        </div>
+                    }*@
+
+                    if (Model.LivePhoto != null)
+                    {
+                        <div style="flex:auto;">
+                            <div class="col-sm-4 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer1">
+                                <img src="~/temp/@ViewBag.LivePhoto" class="img-fluid1" alt="Swissotel" id="docImage1"
+                                     style="height:190px;width:300px">
+
+                            </div>
+
+                            <label style="text-align: center;margin-left: 120px;">Captured Photo</label>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+
+
+        @if ((bool)ViewBag.ShowButton)
+        {
+            <div class="col-md-3" id="divbutton">
+                <div class="space30"></div>
+                <input type="submit" name="Approve" id="RequestEVA" value="Send EVA" class="btn btn-primary" />
+            </div>
+        }
+
+
+
+
+
+    </div>
+</form>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+@section Scripts{
+
+    <script src="~/Assets/vendor/imagezoom/jquery.kinetic.min.js"></script>
+    <script src="~/Assets/vendor/imagezoom/jquery.mousewheel.min.js"></script>
+    <script src="~/Assets/vendor/imagezoom/imagepanner.js"></script>
+    <script src="~/Assets/vendor/BootstrapDatePicker/js/bootstrap-datepicker.min.js"></script>
+}

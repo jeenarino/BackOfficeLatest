@@ -1,0 +1,27 @@
+﻿@model CheckinPortal.BackOffice.Models.SmartTap.Outlet
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>tbPackageMaster</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OutletName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OutletName)
+        </dd>
+        </dl>
+
+        
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.OutletID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

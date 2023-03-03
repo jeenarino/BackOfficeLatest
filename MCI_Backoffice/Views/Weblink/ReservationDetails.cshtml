@@ -1,0 +1,711 @@
+﻿@model CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDetails_Result
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutWeblink.cshtml";
+
+    CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDocumentsDetails_Result reservationDocument = null;
+    if (ViewBag.reservationDocumnent != null)
+    {
+        reservationDocument = (CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDocumentsDetails_Result)ViewBag.reservationDocumnent;
+    }
+}
+
+@section Styles{
+    <style>
+        .page-header {
+            /*margin: 0 0 -65px 0 !important;*/
+        }
+
+        .value-label {
+            font-size: 14px;
+        }
+    </style>
+    @*<link href="~/Assets/vendor/gallery/gallery.css" rel="stylesheet" />*@
+    <link href="~/Assets/vendor/imagezoom/imagepanner.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datepicker/css/classic.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datepicker/css/classic.date.css" rel="stylesheet" />
+
+}
+
+<!-- Row start -->
+<div class="page-header">
+    <!-- Breadcrumb start -->
+    <ul class="nav nav-pills">
+        @for (int i = 0; i < Model.Adultcount; i++)
+        {
+            string TabName = "Primary Guest";
+            if (i > 0)
+            {
+                TabName = $"Accompany Guest {i}";
+            }
+
+            <li>
+                <a class="nav-link @((int)ViewBag.GuestIndex == i ? "active" : "") " href="@Url.Action("ReservationDetails","Weblink",new { ReservationNameID = Model.ReservationNameID, GuestIndex = i })">@TabName</a>
+            </li>
+        }
+
+        @{
+            if (ViewBag.RegCardFolio != null)
+            {
+                var ResDocuments = (List<CheckinPortal.BackOffice.DataAccess.usp_GetReservationDocuments_Result>)ViewBag.RegCardFolio;
+
+                foreach (var doc in ResDocuments)
+                {
+                    <li>
+                        <a class="nav-link" href="@Url.Action("ReservationDocuments","Weblink",new { ReservationDocumentID = doc.ReservationdocumentID , ReservationID = doc.ReservationDetailID})">@doc.DocumentType</a>
+                    </li>
+                }
+            }
+
+        }
+
+        @{
+            if (ViewBag.FeedBackData != null)
+            {
+                <li>
+                    <a class="nav-link" href="@Url.Action("Declarations","Weblink",new { ReservationID = Model.ReservationDetailID})">Declaration</a>
+                </li>
+            }
+        }
+
+
+        <li>
+            <a class="nav-link" href="@Url.Action("ReservationUpsellDetails","Weblink",new { ReservationID = Model.ReservationDetailID})">Upgrade</a>
+        </li>
+
+
+    </ul>
+    <!-- Breadcrumb end -->
+</div>
+<div>
+
+</div>
+
+<div class="row gutters">
+    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="account-settings">
+                    <div class="user-profile">
+                        <h4>Confirmation No</h4>
+                        <h5 class="user-name"> @Model.ReservationNumber</h5>
+                    </div>
+
+                    <div class="baguetteBoxThree gallery">
+                        <div class="row gutters">
+                            @if (reservationDocument != null)
+                            {
+
+                                if (reservationDocument.DocumentImage1 != null)
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary" style="margin-left:10px" onclick="rotateImage('docImage1')">
+                                        <span class="icon-repeat"></span> Rotate
+                                    </button>
+                                    <div class="col-sm-12 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer1">
+                                        <img src="~/temp/@ViewBag.DocumentPath1" class="img-fluid1" alt="Swissotel" id="docImage1"
+                                             style="height:190px;width:300px">
+                                        @*<a href="~/temp/@ViewBag.DocumentPath1" class="effects">
+                                                <div class="overlay">
+                                                    <span class="expand">+</span>
+                                                </div>
+                                            </a>*@
+                                    </div>
+                                }
+
+                                if (reservationDocument.DocumentImage2 != null)
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary" style="margin-left:10px" onclick="rotateImage('docImage2')">
+                                        <span class="icon-repeat"></span> Rotate
+                                    </button>
+                                    <div class="col-sm-12 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer2">
+                                        <img src="~/temp/@ViewBag.DocumentPath2" class="img-fluid1" alt="Swissotel" id="docImage2" style="height:190px;width:300px">
+                                        @*<a href="~/temp/@ViewBag.DocumentPath2" class="effects">
+                                                <div class="overlay">
+                                                    <span class="expand">+</span>
+                                                </div>
+                                            </a>*@
+                                    </div>
+                                }
+
+                                if (reservationDocument.DocumentImage3 != null)
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary" style="margin-left:10px" onclick="rotateImage('docImage3')">
+                                        <span class="icon-repeat"></span> Rotate
+                                    </button>
+                                    <div class="col-sm-12 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer3">
+                                        <img src="~/temp/@ViewBag.DocumentPath3" class="img-fluid1" alt="Swissotel" id="docImage3" style="height:190px;width:300px">
+                                        @*<a href="~/temp/@ViewBag.DocumentPath3" class="effects">
+                                                <div class="overlay">
+                                                    <span class="expand">+</span>
+                                                </div>
+                                            </a>*@
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+        <div class="card h-100">
+            <div class="card-body">
+                <form action="@Url.Action("UpdateProfile","Reservations")" method="post" id="frmReservation">
+
+                    @Html.HiddenFor(model => model.ProfileDetailID)
+                    @Html.HiddenFor(model => model.PMSProfileID)
+
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 column" style=" height: 35px; font-weight: bold;">
+                            Reservation Details
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="fullName">Room Number</label>
+                                    <div>
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <input type="text" value="@Model.RoomNumber" class="form-control" id="txtRoomNumber" placeholder="Enter Room No" />
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="button" value="Assign"
+                                                       onclick='assignRoom("@Model.ReservationNameID")'
+                                                       @((bool)ViewBag.IsRoomAssigned ? "disabled" : "") id="btnAssign" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span>@ViewBag.RoomNotFoundMessage</span>
+                                </div>
+                            </div>
+                            @if (Model.Adultcount > 1)
+                            {
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="fullName">Swap Profile To</label>
+                                        <div>
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    @Html.DropDownList("SwapProfileList", (SelectList)ViewBag.SwapProfileList, new { @class = "form-control" })
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="button" value="Swap"
+                                                           onclick='swapProfile("@Model.ProfileDetailID")'
+                                                           id="btnSwap" class="btn btn-primary" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                        <hr />
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <h4><label for="ArrivalDate">Arrival Date</label><br /></h4>
+                                <h5><label class="value-label" id="ArrivalDate" placeholder="Arrival date">@(Model.ArrivalDate.HasValue ? Model.ArrivalDate.Value.ToString("dd MMM yyyy") : "")</label></h5>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <h4><label for="DepartureDate">Departure Date</label><br /></h4>
+                                <h5><label class="value-label" id="DepartureDate" placeholder="Arrival date">@(Model.DepartureDate.HasValue ? Model.DepartureDate.Value.ToString("dd MMM yyyy") : "")</label></h5>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="Pax">Adult/Child</label><br /></h4>
+                                    <h5><label class="value-label" id="Pax" placeholder="Pax">@Model.Adultcount / @Model.Childcount</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="RoomType">Room Type</label><br /></h4>
+                                    <h5><label class="value-label" id="RoomType" placeholder="Room Type">@Model.RoomType</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="MembershipNo">Membership Number</label><br /></h4>
+                                    <h5><label class="value-label" id="MembershipNo" placeholder="Room Type">@Model.MembershipNo</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="ETA">ETA</label><br /></h4>
+                                    <h5><label class="value-label" id="ETA" placeholder="Room Type">@Model.ETA</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="FlightNo">Flight Number</label><br /></h4>
+                                    <h5><label class="value-label" id="FlightNo" placeholder="Room Type">@Model.FlightNo</label></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+
+                    </div>
+                    <hr />
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 column" style=" height: 35px; font-weight: bold;">
+                            <h6 class="">Personal Details</h6>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="fullName">Last Name</label>
+                                @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", @placeholder = "Enter full name" })
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="website">First Name</label>
+                                <input type="text" class="form-control" id="FirstName" placeholder="Enter First Name" value="@Model.FirstName">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="eMail">Email</label>
+                                <input type="email" class="form-control" name="EmailID" id="eMail" placeholder="Enter Email" value="@Model.Email">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="PhoneNumber" placeholder="Enter Phone No" value="@Model.Phone">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Gender</label>
+                                <input type="text" class="form-control" id="gender" name="Gender" placeholder="Enter Gender" value="@Model.Gender">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Nationality</label>
+                                <input type="text" class="form-control" id="nationality" name="Nationality" placeholder="Enter Nationality" value="@Model.NationalityCode">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Birth Date</label>
+                                <input type="text" class="form-control datepicker-date-format2" name="BirthDate" id="BirthDate" placeholder="Enter Birth Date" value="@(Model.BirthDate != null ? Model.BirthDate.Value.ToString("dd-MM-yyyy") : "")">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12  column" style=" height: 35px; font-weight: bold;">
+                            <h6 class="">Address</h6>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="Street">Address Line 1</label>
+                                <input type="text" class="form-control" id="AddressLine1" name="AddressLine1" placeholder="Address Line 1" value="@Model.AddressLine1">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="ciTy">City</label>
+                                <input type="text" class="form-control" id="City" name="City" placeholder="Enter City" value="@Model.City">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">State</label>
+                                <input type="text" class="form-control" id="State" name="State" placeholder="Enter State" value="@Model.StateCode">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">Country</label>
+                                <input type="text" class="form-control" id="Country" name="country" placeholder="Enter State" value="@Model.Country_Full_name">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="zIp">Postal Code</label>
+                                <input type="text" class="form-control" id="Zip" name="PostalCode" placeholder="Enter Postal Code" value="@Model.PostalCode">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 column" style=" height: 35px; font-weight: bold;">
+                            <h6 class="">Document Informations</h6>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="Street">Document Number</label>
+                                <input type="text" class="form-control" id="DocumentNumber" name="DocumentNumber" placeholder="Enter Document No" value="@Model.DocumentNumber">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="ciTy">Document Type</label>
+                                <input type="text" class="form-control" id="DocumentType" name="DocumentType" placeholder="Enter Document Type" value="@Model.DocumentType">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">Issue Date</label>
+                                <input type="text" class="form-control datepicker-date-format2" id="IssueDate" name="IssueDate" placeholder="Enter Issue Date" value="@(Model.IssueDate != null ? Model.IssueDate.Value.ToString("dd-MM-yyyy") : "")">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">Expiry Date</label>
+                                <input type="text" class="form-control datepicker-date-format2" id="ExoityDate" name="ExpiryDate" placeholder="Enter Expiry Date" value="@(Model.ExpiryDate != null ? Model.ExpiryDate.Value.ToString("dd-MM-yyyy") : "")">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="zIp">Issue Country</label>
+                                <input type="text" class="form-control" id="IssueCountry" name="IssueCountry" placeholder="Enter Issue Country" value="@Model.IssueCountry">
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="text-right">
+                                <button type="button" id="submit" name="submit" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" id="submit" name="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <ul class="app-actions">
+                                <li style="margin-right: 10px;">
+                                    <a target="_blank" href="@($"{System.Configuration.ConfigurationManager.AppSettings["SaavyBaseURL"].ToString()}/Portal/TransactionDetails?Reservationnameid={Model.ReservationNameID}&UID={Session["UserName"]}")" class="btn btn-primary">
+                                        <i class="icon-export"></i> Saavy Pay
+                                    </a>
+                                </li>
+                                <li style="margin-right: 10px;">
+                                    <a href="#" onclick="DeleteProfile()" class="btn btn-primary">
+                                        <i class="icon-export"></i> Delete Profile Info
+                                    </a>
+                                </li>
+                                <li style="margin-right: 10px;">
+                                    <a href="#" onclick="CutKey('@Model.ReservationDetailID')" class="btn btn-secondary">
+                                        <i class="icon-export"></i> Cut key
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="Checkin('@Model.ReservationNameID')" class="btn btn-secondary">
+                                        <i class="icon-export"></i> Checkin
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="profileDeletions" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+    <form action="@Url.Action("DeleteProfileInfo","Reservations")" method="post">
+        @Html.HiddenFor(model => model.ReservationDetailID)
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+
+                        <div class="form-horizontal" style="text-align:left">
+                            <div class="form-group col-md-12">
+                                <label for="exampleFormControlTextarea1">Reason</label>
+                                <textarea name="ProfileDeleteReason" id="PackageDesc" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <p class="mb-3">All the profile related information associated with this guest will be permanently deleted.This operation cannot be reverted.</p>
+                        @*<p class="mb-3">Do you want to proceed?</p>*@
+                    </div>
+                </div>
+                <div class="modal-footer custom">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-link danger" data-dismiss="modal">No</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-side">
+                        <button type="submit" class="btn btn-link success">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+
+    @* <script src="~/Assets/vendor/imagezoom/wheelzoom.js"></script>*@
+
+    @*<script src="~/Assets/vendor/gallery/baguetteBox.js"></script>
+        <script src="~/Assets/vendor/gallery/plugins.js"></script>
+        <script src="~/Assets/vendor/gallery/custom-gallery.js"></script>*@
+
+    <script src="~/Assets/vendor/imagezoom/jquery.kinetic.min.js"></script>
+    <script src="~/Assets/vendor/imagezoom/jquery.mousewheel.min.js"></script>
+    <script src="~/Assets/vendor/imagezoom/imagepanner.js"></script>
+
+    <script src="~/Assets/vendor/datepicker/js/picker.js"></script>
+    <script src="~/Assets/vendor/datepicker/js/picker.date.js"></script>
+    <script src="~/Assets/vendor/datepicker/js/custom-picker.js"></script>
+
+    <script>
+        const httpPost = (endpoint, data) => fetch(`${endpoint}`, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                Accept: 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json());
+
+        const CheckinIntoOpera = (reservationNameID) =>
+            httpPost(BaseURL + '/Reservations/CheckinIntoOpera?ReservationNameID=' + reservationNameID).then(response => {
+                return response;
+            });
+
+        const EncodeKey = (reservationID) =>
+            httpPost(BaseURL + '/Reservations/EncodeKey?ReservationID=' + reservationID).then(response => {
+                return response;
+            });
+
+        const AssignRoom = (assignRoomData) =>
+            httpPost(BaseURL + '/Reservations/AssignRoom', assignRoomData).then(response => {
+                return response;
+            });
+
+        const profileSwap = (profileSwapData) =>
+            httpPost(BaseURL + '/Reservations/profileSwap', profileSwapData).then(response => {
+                return response;
+            });
+
+        function Checkin(reservationNameID) {
+
+            CheckinIntoOpera(reservationNameID).then(response => {
+                if (response.result) {
+                    //show success
+                    notes.show("Reservation checked-in Success!", {
+                        type: 'success',
+                        title: 'Check-in',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+
+                } else {
+                    //show failure
+                    messages.show('Check-in Failed with response ' + response.message, {
+                        type: 'danger',
+                        title: 'Check-in Failed,',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        function assignRoom(ReservationNameID) {
+
+            var data = {
+                ReservationNameID: ReservationNameID,
+                RoomNumber: $('#txtRoomNumber').val()
+            }
+            AssignRoom(data).then(response => {
+                if (response.result) {
+                    //show success
+                    notes.show("Room assiged successfully!", {
+                        type: 'success',
+                        title: 'Room Assignement',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+
+                } else {
+                    //show failure
+                    messages.show('Room assignment failed with response ' + response.message, {
+                        type: 'danger',
+                        title: 'Room Assign Failed,',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        function CutKey(reservationID) {
+            EncodeKey(reservationID).then(response => {
+                if (response.result) {
+                    //show success
+                    notes.show("Key cutting successfull!", {
+                        type: 'success',
+                        title: 'Cut Key',
+                        icon: '<i class="icon-sentiment_satisfied"></i>'
+                    });
+
+                } else {
+                    //show failure
+                    messages.show('Key cutting failed with response ' + response.message, {
+                        type: 'danger',
+                        title: 'Key Cutting Failed,',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        function DeleteProfile() {
+
+            $('#profileDeletions').modal('show');
+        }
+
+      //  demo = wheelzoom(document.querySelectorAll('img'));
+
+
+        var panimage1 // register arbitrary variable
+        var panimage2 // register arbitrary variable
+        var panimage3 // register arbitrary variable
+        jQuery(function ($) {
+            if ($('#docImage1').length > 0) {
+                panimage1 = new imagepanner({
+                    wrapper: $('#pcontainer1'), // jQuery selector to image container
+                    imgpos: [100, 300], // initial image position- x, y
+                    maxlevel: 4 // maximum zoom level
+                });
+            }
+
+            if ($('#docImage2').length > 0) {
+                panimage2 = new imagepanner({
+                    wrapper: $('#pcontainer2'), // jQuery selector to image container
+                    imgpos: [100, 300], // initial image position- x, y
+                    maxlevel: 4 // maximum zoom level
+                });
+            }
+
+
+            if ($('#docImage3').length > 0) {
+                panimage3 = new imagepanner({
+                    wrapper: $('#pcontainer3'), // jQuery selector to image container
+                    imgpos: [100, 300], // initial image position- x, y
+                    maxlevel: 4 // maximum zoom level
+                })
+            }
+        });
+
+        function swapProfile(fromProfileDetailId) {
+            profileSwap({
+                "fromProfileDetailId": fromProfileDetailId,
+                "toProfileDetailId": $('#SwapProfileList').val()
+            }).then(response => {
+                window.location.href = BaseURL + '/Reservations/Details?ReservationID=' + @Model.ReservationDetailID;
+            });
+        }
+
+
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+
+            var frmDate = $(this).serialize();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                data: frmDate,
+                type: "POST",
+                success: function (data) {
+                    if (data.result) {
+                        messages.show('Profile Update successfully', {
+                            type: 'success',
+                            title: 'Profile Update,',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                    else {
+                        messages.show('Unable to update the profile details to opera (' + data.message+')', {
+                            type: 'danger',
+                            title: 'Profile Update failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                },
+                error: function (error) {
+                    messages.show('Unable to update the profile details', {
+                        type: 'danger',
+                        title: 'Profile Update failed',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+
+
+            })
+
+        });
+
+        function rotateImage(imageID) {
+
+            var base64Image = $('#' + imageID).attr('src');
+
+            var offScreenCanvas = document.createElement('canvas');
+            offScreenCanvasCtx = offScreenCanvas.getContext('2d');
+            var img = new Image();
+
+            img.onload = function () {
+                offScreenCanvas.height = img.width;
+                offScreenCanvas.width = img.height;
+                if (true) {
+                    offScreenCanvasCtx.rotate(90 * Math.PI / 180);
+                    offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
+                } else {
+                    offScreenCanvasCtx.rotate(-90 * Math.PI / 180);
+                    offScreenCanvasCtx.translate(-offScreenCanvas.height, 0);
+                }
+                offScreenCanvasCtx.drawImage(img, 0, 0);
+
+                var rotatedImage = offScreenCanvas.toDataURL('image/jpeg', 0.5);
+
+                rotatedImage = rotatedImage.replace('data:image/jpeg;base64,', '');
+                rotatedImage = rotatedImage.replace('data:image/png;base64,', '');
+
+                $('#' + imageID).attr('src', 'data:image/jpeg;base64,' + rotatedImage);
+            };
+
+            img.src = base64Image;
+        }
+
+    </script>
+}
+

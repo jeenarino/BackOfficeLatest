@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCI_BackOffice", "MCI_Backoffice\MCI_BackOffice.csproj", "{72A0B041-A40B-4C29-88D8-F650E38668D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72A0B041-A40B-4C29-88D8-F650E38668D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A0B041-A40B-4C29-88D8-F650E38668D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72A0B041-A40B-4C29-88D8-F650E38668D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A0B041-A40B-4C29-88D8-F650E38668D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2814B669-73BD-409C-8341-7C0FFF4ADF6A}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,38 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="shortcut icon" href="img/fav.png" />
+
+    <!-- Title -->
+    <title>Login</title>
+
+    <!-- *************
+        ************ Common Css Files *************
+    ************ -->
+    <!-- Bootstrap CSS -->
+    <link href="~/Assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Master CSS -->
+    <link href="~/Assets/css/main.css" rel="stylesheet" />
+
+</head>
+
+<body class="authentication">
+
+    <!-- Container start -->
+    <div class="container">
+
+       @RenderBody()
+
+    </div>
+    <!-- Container end -->
+    <script src="~/Assets/js/jquery.min.js"></script>
+    <script src="~/Assets/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts",false)
+</body>
+</html>

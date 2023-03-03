@@ -1,0 +1,67 @@
+﻿@model CheckinPortal.BackOffice.DataAccess.tbPackageMaster
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>tbPackageMaster</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PackageCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PackageCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PackageName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PackageName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PackageAmount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PackageAmount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PackageDesc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PackageDesc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PackageImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PackageImage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.isActive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.isActive)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PackageID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

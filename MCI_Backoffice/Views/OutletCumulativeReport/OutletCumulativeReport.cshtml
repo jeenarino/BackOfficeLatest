@@ -1,0 +1,206 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+
+}
+<h2>Cumulative Report</h2>
+
+<div class="container-fluid px-4 pt-4 mb-4">
+
+   
+    <div class="content-wrap">
+        <div class="row">
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-danger" role="alert" id="divmessage">
+                    @(ViewBag.Message)
+                </div>
+            }
+            <div class="col-lg-12">
+                <form name="SmartTapCumulativeReportForm" id="SmartTapReportForm1" method="post" action="@Url.Action("FetchOutletCumulativeReport","OutletCumulativeReport")">
+                    <div class="date_picker">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Start Date</label>
+                                <div class="form-icon">
+                                    <span class="icon-append"><i class="far fa-calendar-alt"></i></span>
+                                    <input name="StartDate" id="startDate" type="text" class="form-control datepicker" value="@ViewBag.StartDate">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">End Date</label>
+
+                                <div class="form-icon">
+                                    <span class="icon-append"><i class="far fa-calendar-alt"></i></span>
+                                    <input name="EndDate" id="endDate" type="text" class="form-control datepicker" value="@ViewBag.EndDate">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="phone">OutletName</label>
+                                @Html.DropDownList("OutletName", (SelectList)ViewBag.OutletNameList, "-- Select Outlets--", new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                <label for="phone">Functionality Type</label>
+                                @Html.DropDownList("FunctionalityType", (SelectList)ViewBag.FunctionalityList, "-- Select FunctionalityType--", new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3" id="divbutton">
+                                <div class="space30"></div>
+                                <input type="button" name="SubmitButon" id="viewButon" value="View" class="btn btn-primary" />
+                                <input type="submit" name="SubmitButon" id="exportButon" value="Export to PDF" class="btn btn-secondary" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+
+                <div class="col-md-12">
+                    <div class="table-responsive cstm-table">
+                        <table id="fixedHeader" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap" scope="col">Functionality Type</th>
+                                    <th class="text-nowrap" scope="col">Outlet Name</th>
+                                    <th class="text-nowrap" scope="col">Guest Name</th>
+                                    <th class="text-nowrap" scope="col">Room No</th>
+                                    <th class="text-nowrap" scope="col">Consumed Count</th>
+                                    <th class="text-nowrap" scope="col">Transaction Date</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Assets/vendor/BootstrapDatePicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+    <script>
+
+    $(document).ready(function () {
+
+
+
+
+        var dt = $('#fixedHeader').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                url: "@Url.Action("FetchOutletCumulativeReport", "OutletCumulativeReport")",
+                type: "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        "StartDate": $('#startDate').val(),
+                        "EndDate": $('#endDate').val(),
+                        "OutletId": $('#OutletName option:selected').val(),
+                        "functionality": $('#FunctionalityType option:selected').text()
+                    });
+                }
+            },
+            "columns": [
+                {
+
+                    "data": "PackageType"
+                },
+                {
+
+                    "data": "OutletName"
+                },
+                { "data": "GuestFullName" },
+                { "data": "RoomNo" },
+                { "data": "ConsumedCount" },
+                {
+                    "data": "TransactionDate",
+                    "render": function (data, type, row) {
+                        return formatDateTime(new Date(parseInt(row.TransactionDate.substr(6))));
+
+                    }
+                },
+
+
+            ],
+            "order": [[3, 'desc']]
+
+        });
+
+
+   
+
+
+
+
+        $('#fixedHeader').on('error.dt', function (e, settings, techNote, message) {
+                console.log('An error has been reported by DataTables: ', message);
+                e.preventDefault();
+            });
+       
+        $('#viewButon').on('click', function (e) {
+            $('#divmessage').remove();
+            e.preventDefault();
+
+            dt.ajax.reload();
+
+
+
+        })
+       
+    });
+
+
+        function formatDateTime(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            hour = d.getHours();
+            min = d.getMinutes();
+            sec = d.getSeconds();
+
+
+
+            if (hour.toString().length < 2)
+                hour = '0' + hour;
+            if (min.toString().length < 2)
+                min = '0' + min;
+            if (sec.toString().length < 2)
+                sec = '0' + sec;
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-') + " " + [hour, min, sec].join(':');
+        }
+    $('.datepicker').datepicker({
+    clearBtn: true,
+    format: "mm/dd/yyyy"
+    });
+    </script>
+}
+
+
+

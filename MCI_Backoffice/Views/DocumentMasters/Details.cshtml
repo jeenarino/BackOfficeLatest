@@ -1,0 +1,35 @@
+﻿@model CheckinPortal.BackOffice.DataAccess.tbDocumentMaster
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Document Master</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DocumentCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocumentCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocumentType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocumentType)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DocumentMasterID }, new { @class="btn btn-primary" }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

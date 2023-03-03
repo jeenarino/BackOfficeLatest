@@ -1,0 +1,34 @@
+﻿@model CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDetails_Result
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutWeblink.cshtml";
+    CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDocumentsDetails_Result reservationDocument = null;
+    if (ViewBag.reservationDocumnent != null)
+    {
+        reservationDocument = (CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDocumentsDetails_Result)ViewBag.reservationDocumnent;
+    }
+}
+
+@section Styles{
+    <style>
+        .page-header {
+            /*margin: 0 0 -65px 0 !important;*/
+        }
+
+        .value-label {
+            font-size: 14px;
+        }
+    </style>
+    <link href="~/Assets/vendor/gallery/gallery.css" rel="stylesheet" />
+}
+
+
+<h2>Reservation not found</h2>
+
+
+@section Scripts{
+    <script src="~/Assets/vendor/gallery/baguetteBox.js"></script>
+    <script src="~/Assets/vendor/gallery/plugins.js"></script>
+    <script src="~/Assets/vendor/gallery/custom-gallery.js"></script>
+}
+

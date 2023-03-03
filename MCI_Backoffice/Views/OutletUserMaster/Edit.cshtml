@@ -1,0 +1,128 @@
+﻿@model CheckinPortal.BackOffice.Models.SmartTap.OutletUser
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var seloutlet = Model.SelectedOutlets;
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm("Edit", "OutletUserMaster", FormMethod.Post, new { enctype = "multipart/form-data", @Id = "userform" }))
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4>User Master</h4>
+    <hr />
+
+    @Html.HiddenFor(model => model.ID, new { @id = "hdnid" })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2", @id = "userform" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 eye-input">
+                <a href="#">
+                    <i id="toggleNewPassword" class="icon-eye1" onclick="showNewPasswordClick()"></i>
+                </a>
+                @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @id = "Password", @type = "password" })
+
+                @Html.ValidationMessageFor(Model => Model.Password, "", new { @class = "text-danger" })
+           
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.Label("Outlet", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.HiddenFor(Model => Model.SelectedOutlets);
+        <div class="col-md-10">
+            <select id="outletname" multiple="multiple" required name="outletname">
+                @if (ViewBag.outlets != null)
+                {
+                    foreach (var item in ViewBag.Outlets)
+                    {
+                        if (item.OutletID != null)
+                        {
+                            <option value="@item.OutletID">
+                                @item.OutletName
+                            </option>
+
+                        }
+                    }
+                }
+
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" id="btnsubs" value="Save" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>*@
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="~/Assets/css/bootstrap-mutiselect.css" rel="stylesheet" />
+
+    <script src="~/Assets/js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#outletname').multiselect({
+                includeSelectAllOption: true
+            });
+
+            //$("#outletname").val();
+
+            // Then refresh
+            var my_val = '@seloutlet';
+            var str_array = my_val.split(',');
+
+
+            $("#outletname").val(str_array);
+            $("#outletname").multiselect("refresh",true);
+        });
+
+        $("#btnsubs").click(function () {
+
+            var selectedval = $("#outletname").val();
+
+            $("#SelectedOutlets").val(selectedval);
+
+            $("#userform").submit();
+        });
+        function showNewPasswordClick() {
+
+
+
+            if ($('#Password').attr('type') === 'password') {
+
+                $('#Password').attr('type', 'text');
+                document.getElementById("toggleNewPassword").classList.remove('icon-eye1');
+                document.getElementById("toggleNewPassword").classList.add('icon-eye-off');
+            }
+            else {
+
+                $('#Password').attr('type', 'password');
+                document.getElementById("toggleNewPassword").classList.remove('icon-eye-off');
+                document.getElementById("toggleNewPassword").classList.add('icon-eye1');
+            }
+        }
+
+
+    </script>
+    }

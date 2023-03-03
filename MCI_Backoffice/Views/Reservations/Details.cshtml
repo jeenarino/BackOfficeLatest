@@ -1,0 +1,962 @@
+﻿@model CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDetails_Result
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDocumentsDetails_Result reservationDocument = null;
+    List<dynamic> additionalFields = null;
+
+    if (ViewBag.reservationDocumnent != null)
+    {
+        reservationDocument = (CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDocumentsDetails_Result)ViewBag.reservationDocumnent;
+    }
+
+    if (ViewBag.additionalFields != null)
+    {
+        additionalFields = (List<dynamic>)ViewBag.additionalFields;
+    }
+}
+
+@section Styles{
+    <style>
+        .page-header {
+            /*margin: 0 0 -65px 0 !important;*/
+        }
+
+        .value-label {
+            font-size: 14px;
+        }
+    </style>
+    @*<link href="~/Assets/vendor/gallery/gallery.css" rel="stylesheet" />*@
+    <link href="~/Assets/vendor/imagezoom/imagepanner.css" rel="stylesheet" />
+    @*<link href="~/Assets/vendor/datepicker/css/classic.css" rel="stylesheet" />
+        <link href="~/Assets/vendor/datepicker/css/classic.date.css" rel="stylesheet" />*@
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+}
+
+<!-- Row start -->
+<div class="page-header">
+    <!-- Breadcrumb start -->
+    <ul class="nav nav-pills">
+        @for (int i = 0; i < Model.Adultcount; i++)
+        {
+            string TabName = "Primary Guest";
+            if (i > 0)
+            {
+                if (ViewBag.SwapProfileList != null)
+                {
+                    TabName = $"Accompany Guest {i}";
+                    <li>
+                        <a class="nav-link @((int)ViewBag.GuestIndex == i ? "active" : "") "
+                           href="@Url.Action("Details", "Reservations", new { ReservationID = Model.ReservationDetailID, GuestIndex = i })"
+                           onclick="ShowLoading()">@TabName</a>
+                    </li>
+                }
+            }
+            else
+            {
+                <li>
+                    <a class="nav-link @((int)ViewBag.GuestIndex == i ? "active" : "") "
+                       href="@Url.Action("Details", "Reservations", new { ReservationID = Model.ReservationDetailID, GuestIndex = i })"
+                       onclick="ShowLoading()">@TabName</a>
+                </li>
+            }
+        }
+
+        @{
+            if (ViewBag.RegCardFolio != null)
+            {
+                var ResDocuments = (List<CheckinPortal.BackOffice.DataAccess.usp_GetReservationDocuments_Result>)ViewBag.RegCardFolio;
+
+                foreach (var doc in ResDocuments)
+                {
+                    <li>
+                        <a class="nav-link"
+                           href="@Url.Action("Documents", "Reservations", new { ReservationDocumentID = doc.ReservationdocumentID, ReservationID = doc.ReservationDetailID })"
+                           onclick="ShowLoading()">@doc.DocumentType</a>
+                    </li>
+                }
+            }
+
+        }
+
+        @{
+            if (ViewBag.FeedBackData != null)
+            {
+                <li>
+                    <a class="nav-link"
+                       href="@Url.Action("Declarations", "Reservations", new { ReservationID = Model.ReservationDetailID })"
+                       onclick="ShowLoading()">Declaration</a>
+                </li>
+            }
+        }
+        @if (ViewBag.RequestList != null)
+        {
+            <li>
+                <a class="nav-link"
+                   href="@Url.Action("ReservationUpsellDetails", "Reservations", new { ReservationID = Model.ReservationDetailID })"
+                   onclick="ShowLoading()">Upgrade</a>
+            </li>
+        }
+    </ul>
+    <!-- Breadcrumb end -->
+</div>
+<div>
+
+</div>
+
+<div class="row gutters">
+    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="account-settings">
+                    <div class="user-profile">
+                        <h4>Confirmation No</h4>
+                        <h5 class="user-name"> @Model.ReservationNumber</h5>
+                    </div>
+
+                    <div class="baguetteBoxThree gallery">
+                        <div class="row gutters">
+                            @if (reservationDocument != null)
+                            {
+
+                                if (reservationDocument.DocumentImage1 != null)
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary" style="margin-left:10px" onclick="rotateImage('docImage1')">
+                                        <span class="icon-repeat"></span> Rotate
+                                    </button>
+                                    <div class="col-sm-12 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer1">
+                                        <img src="~/temp/@ViewBag.DocumentPath1" class="img-fluid1" alt="Swissotel" id="docImage1"
+                                             style="height:190px;width:300px">
+                                        @*<a href="~/temp/@ViewBag.DocumentPath1" class="effects">
+                                                <div class="overlay">
+                                                    <span class="expand">+</span>
+                                                </div>
+                                            </a>*@
+                                    </div>
+                                }
+
+                                if (reservationDocument.DocumentImage2 != null)
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary" style="margin-left:10px" onclick="rotateImage('docImage2')">
+                                        <span class="icon-repeat"></span> Rotate
+                                    </button>
+                                    <div class="col-sm-12 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer2">
+                                        <img src="~/temp/@ViewBag.DocumentPath2" class="img-fluid1" alt="Swissotel" id="docImage2" style="height:190px;width:300px">
+                                        @*<a href="~/temp/@ViewBag.DocumentPath2" class="effects">
+                                                <div class="overlay">
+                                                    <span class="expand">+</span>
+                                                </div>
+                                            </a>*@
+                                    </div>
+                                }
+
+                                if (reservationDocument.DocumentImage3 != null)
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary" style="margin-left:10px" onclick="rotateImage('docImage3')">
+                                        <span class="icon-repeat"></span> Rotate
+                                    </button>
+                                    <div class="col-sm-12 col-12" style="margin:10px 0px;max-height:190px" id="pcontainer3">
+                                        <img src="~/temp/@ViewBag.DocumentPath3" class="img-fluid1" alt="Swissotel" id="docImage3" style="height:190px;width:300px">
+                                        @*<a href="~/temp/@ViewBag.DocumentPath3" class="effects">
+                                                <div class="overlay">
+                                                    <span class="expand">+</span>
+                                                </div>
+                                            </a>*@
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+        <div class="card h-100">
+            <div class="card-body">
+                <form action="@Url.Action("UpdateProfile", "Reservations")" method="post" id="frmReservation">
+
+                    @Html.HiddenFor(model => model.ProfileDetailID)
+                    @Html.HiddenFor(model => model.PMSProfileID)
+                    @Html.HiddenFor(model => model.ReservationDetailID)
+
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 column" style=" height: 35px; font-weight: bold;">
+                            Reservation Details
+                        </div>
+                        <br />
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="fullName">Room Number</label>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <input type="text" value="@Model.RoomNumber" class="form-control" id="txtRoomNumber" placeholder="Enter Room No" />
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(Model.StatusDescription) && (Model.StatusDescription.ToUpper().Equals("RESERVED") || Model.StatusDescription.ToUpper().Equals("DUEIN")
+                                            || Model.StatusDescription.ToUpper().Equals("NON")))
+                                        {
+                                            <div class="col-4">
+                                                <input type = "button" value="Assign"
+                                                       onclick='assignRoom("@Model.ReservationNameID")'
+                                                       @*@((bool)ViewBag.IsRoomAssigned ? "disabled" : "")*@
+                                                       id="btnAssign" class="btn btn-primary" />
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <span>@ViewBag.RoomNotFoundMessage</span>
+                            </div>
+                        </div>
+                        @if (Model.Adultcount > 1 && ViewBag.SwapProfileList != null)
+                        {
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="fullName">Swap Profile To</label>
+                                    <div>
+                                        <div class="row">
+                                            <div class="col-8">
+                                                @Html.DropDownList("SwapProfileList", (SelectList)ViewBag.SwapProfileList, new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="button" value="Swap"
+                                                       onclick='swapProfile("@Model.ProfileDetailID")'
+                                                       id="btnSwap" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"></div>
+                        }
+                        <hr />
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <h4><label for="ArrivalDate">Arrival Date</label><br /></h4>
+                                <h5><label class="value-label" id="ArrivalDate" placeholder="Arrival date">@(Model.ArrivalDate.HasValue ? Model.ArrivalDate.Value.ToString("dd MMM yyyy") : "")</label></h5>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <h4><label for="DepartureDate">Departure Date</label><br /></h4>
+                                <h5><label class="value-label" id="DepartureDate" placeholder="Arrival date">@(Model.DepartureDate.HasValue ? Model.DepartureDate.Value.ToString("dd MMM yyyy") : "")</label></h5>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="Pax">Adult/Child</label><br /></h4>
+                                    <h5><label class="value-label" id="Pax" placeholder="Pax">@Model.Adultcount / @Model.Childcount</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="RoomType">Room Type</label><br /></h4>
+                                    <h5><label class="value-label" id="RoomType" placeholder="Room Type">@Model.RoomType</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="MembershipNo">Membership Number</label><br /></h4>
+                                    <h5><label class="value-label" id="MembershipNo" placeholder="Room Type">@Model.MembershipNo</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="ETA">ETA</label><br /></h4>
+                                    <h5><label class="value-label" id="ETA" placeholder="Room Type">@Model.ETA</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="FlightNo">Flight Number</label><br /></h4>
+                                    <h5><label class="value-label" id="FlightNo" placeholder="Room Type">@Model.FlightNo</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="FlightNo">Reservation Status</label><br /></h4>
+                                    <h5><label class="value-label" id="FlightNo" placeholder="Room Type">@Model.StatusDescription</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr />
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 column" style=" height: 35px; font-weight: bold;">
+                            <h6 class="">Personal Details</h6>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="fullName">Last Name</label>
+                                @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", @placeholder = "Enter full name" })
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="website">First Name</label>
+                                <input type="text" class="form-control" id="FirstName" placeholder="Enter First Name" value="@Model.FirstName">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="eMail">Email</label>
+                                <input type="email" class="form-control" name="EmailID" id="eMail" placeholder="Enter Email" value="@Model.Email">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="PhoneNumber" placeholder="Enter Phone No" value="@Model.Phone">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Gender</label>
+                                @Html.DropDownListFor(model => model.Gender, (SelectList)ViewBag.GenderList, "-- Select Gender--", new { @class = "form-control" })
+                                @*<input type="text" class="form-control" id="gender" name="Gender" placeholder="Enter Gender" value="@Model.Gender">*@
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Nationality</label>
+                                @Html.DropDownListFor(model => model.NationalityID, (SelectList)ViewBag.NationalityList, "-- Select Nationality--", new { @class = "form-control" })
+                                @*<input type="text" class="form-control" id="nationality" name="Nationality" placeholder="Enter Nationality" value="@Model.NationalityCode">*@
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone">Birth Date</label>
+                                <input type="text" class="form-control datepicker" name="BirthDate" id="BirthDate" placeholder="Enter Birth Date" value="@(Model.BirthDate != null ? Model.BirthDate.Value.ToString("dd-MM-yyyy") : "")">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12  column" style=" height: 35px; font-weight: bold;">
+                            <h6 class="">Address</h6>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="Street">Address Line 1</label>
+                                <input type="text" class="form-control" id="AddressLine1" name="AddressLine1" placeholder="Address Line 1" value="@Model.AddressLine1">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="ciTy">City</label>
+                                <input type="text" class="form-control" id="City" name="City" placeholder="Enter City" value="@Model.City">
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">Country</label>
+                                @Html.DropDownListFor(model => model.CountryMasterID, (SelectList)ViewBag.CountryList, "-- Select Countrt--", new { @class = "form-control", onchange = "GetStateByCountryID(this)" })
+                                @*<input type="text" class="form-control" id="Country" name="country" placeholder="Enter State" value="@Model.Country_Full_name">*@
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">State</label>
+                                @Html.DropDownListFor(model => model.StateMasterID, (SelectList)ViewBag.StateList, "-- Select State--", new { @class = "form-control" })
+                                @*<input type="text" class="form-control" id="State" name="State" placeholder="Enter State" value="@Model.StateCode">*@
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="zIp">Postal Code</label>
+                                <input type="text" class="form-control" id="Zip" name="PostalCode" placeholder="Enter Postal Code" value="@Model.PostalCode">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row gutters grid-container">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 column" style=" height: 35px; font-weight: bold;">
+                            <h6 class="">Document Informations</h6>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="Street">Document Number</label>
+                                <input type="text" class="form-control" id="DocumentNumber" name="DocumentNumber" placeholder="Enter Document No" value="@Model.DocumentNumber">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="ciTy">Document Type</label>
+                                @Html.DropDownListFor(model => model.DocumentType, (SelectList)ViewBag.DocumentTypeList, "-- Select Document Type--", new { @class = "form-control" })
+                                @*<input type="text" class="form-control" id="DocumentType" name="DocumentType" placeholder="Enter Document Type" value="@Model.DocumentType">*@
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">Issue Date</label>
+                                <input type="text" class="form-control datepicker" id="IssueDate" name="IssueDate" placeholder="Enter Issue Date" value="@(Model.IssueDate != null ? Model.IssueDate.Value.ToString("dd-MM-yyyy") : "")">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="sTate">Expiry Date</label>
+                                <input type="text" class="form-control datepicker" id="ExoityDate" name="ExpiryDate" placeholder="Enter Expiry Date" value="@(Model.ExpiryDate != null ? Model.ExpiryDate.Value.ToString("dd-MM-yyyy") : "")">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="zIp">Issue Country</label>
+                                @Html.DropDownListFor(model => model.IssueCountry, (SelectList)ViewBag.IssueCountryList, "-- Select Issue Country--", new { @class = "form-control" })
+                                @*<input type="text" class="form-control" id="IssueCountry" name="IssueCountry" placeholder="Enter Issue Country" value="@Model.IssueCountry">*@
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="text-right">
+                                <a class="btn btn-secondary" href="@Url.Action("Index","Reservations")">Cancel</a>
+                                @*<button type="button" id="submit" onclick="location.href='@Url.Action("Index","Reservation")'"  name="submit" class="btn btn-secondary">Cancel</button>*@
+                                @if (!string.IsNullOrEmpty(Model.StatusDescription) && (!Model.StatusDescription.ToUpper().Equals("CHECKEDOUT") || !Model.StatusDescription.ToUpper().Equals("CANCELLED")))
+                                {
+                                    <button type="submit" id="submit" name="submit" class="btn btn-primary">Update</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <ul class="app-actions">
+                                <li style="margin-right: 10px;">
+                                    @*<a target="_blank" href="@($"{System.Configuration.ConfigurationManager.AppSettings["SaavyBaseURL"].ToString()}/Reservations/Details?ReservationNameID={Model.ReservationNameID}&UID={Session["UserName"]}")" class="btn btn-primary">*@
+
+                                    <a href="@Url.Action("OpenSaavyPay","Reservations",new {reservationID = Model.ReservationDetailID })" target="_blank" class="btn btn-primary">
+                                        <i class="icon-export"></i> Saavy Pay
+                                    </a>
+                                </li>
+                                @if (additionalFields != null && additionalFields.Count > 0)
+                                {
+                                    <li style="margin-right: 10px;">
+                                        <a href="#" onclick="AdditionalInfo()" class="btn btn-primary">
+                                            <i class="icon-export"></i> Additional Info
+                                        </a>
+                                    </li>
+                                }
+                                <li style="margin-right: 10px;">
+                                    <a href="#" onclick="DeleteProfile()" class="btn btn-primary">
+                                        <i class="icon-export"></i> Delete Profile Info
+                                    </a>
+                                </li>
+                                <li style="margin-right: 10px;display:none">
+                                    <a href="#" onclick="CutKey('@Model.ReservationDetailID')" class="btn btn-secondary">
+                                        <i class="icon-export"></i> Cut key
+                                    </a>
+                                </li>
+                                @if (!string.IsNullOrEmpty(Model.StatusDescription) && Model.StatusDescription.ToUpper().Equals("DUEIN"))
+                                {
+                                    <li>
+                                        <a href="#" onclick="ConfirmSharerCheckin('@Model.ReservationNameID')" class="btn btn-secondary">
+                                            <i class="icon-export"></i> Checkin
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="profileDeletions" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+    <form action="@Url.Action("DeleteProfileInfo","Reservations")" method="post">
+        @Html.HiddenFor(model => model.ReservationDetailID)
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+
+                        <div class="form-horizontal" style="text-align:left">
+                            <div class="form-group col-md-12">
+                                <label for="exampleFormControlTextarea1">Reason</label>
+                                <textarea name="ProfileDeleteReason" id="PackageDesc" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <p class="mb-3">All the profile related information associated with this guest will be permanently deleted.This operation cannot be reverted.</p>
+                        @*<p class="mb-3">Do you want to proceed?</p>*@
+                    </div>
+                </div>
+                <div class="modal-footer custom">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-link danger" data-dismiss="modal">No</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-side">
+                        <button type="submit" class="btn btn-link success">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<div class="modal fade" id="profileAdditionalFields" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+    <form action="" method="post">
+        @Html.HiddenFor(model => model.ReservationDetailID)
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">Additional Informations</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
+                </div>
+                <div class="modal-body">
+                    <!--Loop and display additional fields-->
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr style="background-color: #cd9d63">
+                                <th>Field</th>
+                                <th>Value</th>
+                            </tr>                            
+                        </thead>
+                        <tbody>
+                            @foreach (var item in additionalFields)
+                            {
+                                <tr>
+                                    <td>@item.FieldName</td>
+                                    <td>@item.FieldValue</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    
+                </div>
+                <div class="modal-footer custom">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-link danger" data-dismiss="modal">OK</button>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/imagezoom/jquery.kinetic.min.js"></script>
+    <script src="~/Assets/vendor/imagezoom/jquery.mousewheel.min.js"></script>
+    <script src="~/Assets/vendor/imagezoom/imagepanner.js"></script>
+
+    <!--<script src="~/Assets/vendor/datepicker/js/picker.js"></script>
+    <script src="~/Assets/vendor/datepicker/js/picker.date.js"></script>
+    <script src="~/Assets/vendor/datepicker/js/custom-picker.js"></script>-->
+    <!--<script src="~/Assets/vendor/BootstrapDatePicker/js/bootstrap-datepicker.js"></script>-->
+
+    <script src="~/Assets/vendor/BootstrapDatePicker/js/bootstrap-datepicker.min.js"></script>
+
+    <script>
+        $("#loading-wrapper").fadeOut(300)
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                autoclose: true
+            });
+        })
+
+        function ConfirmSharerCheckin(reservationNameID) {
+            // check sharer reservation exist  in this reservation
+
+            $.ajax({
+                url: "@Url.Action("CheckForSharerReservation", "Reservations")",
+                data: {
+                    "ReservationNameID": reservationNameID
+                },
+                type: "POST",
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(300);
+                    if (data.result) {
+                        if (data.isSharerExist) {
+                            $.confirm({
+                                title: 'Confirm!',
+                                content: 'Sharer reservation found, would you like to chekin sharer resrvation?',
+                                buttons: {
+                                    yes: function () {
+                                        Checkin(reservationNameID,true)
+                                    },
+                                    no: function () {
+                                        Checkin(reservationNameID, false)
+                                    },
+                                    cancel: function () {
+
+                                    }
+                                }
+                            });
+                        } else {
+                            Checkin(reservationNameID, false)
+                        }
+                    }
+                    else {
+                        notes.show('Unable to process checkin, unable to fetch reservation', {
+                            type: 'danger',
+                            title: 'Reservation Checkin Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                },
+                error: function (error) {
+                    $("#loading-wrapper").fadeOut(300);
+                    notes.show('Unable to process checkin', {
+                        type: 'danger',
+                        title: 'Reservation Checkin Failed',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        function Checkin(reservationNameID,withSharer) {
+
+            $("#loading-wrapper").fadeIn(300);
+             $.ajax({
+                url: BaseURL + '/Reservations/CheckinIntoOpera?ReservationNameID=' + reservationNameID + '&WithSharer=' + withSharer,
+                 type: "POST",
+                 data: {
+                     ReservationNameID: reservationNameID,
+                     WithSharer: withSharer
+                 },
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(300);
+                    if (data.result) {
+                        notes.show("Reservation checked-in Success!", {
+                            type: 'success',
+                            title: 'Check-in',
+                            icon: '<i class="icon-sentiment_satisfied"></i>'
+                        });
+                    }
+                    else {
+                        notes.show('Check-in Failed with response ' + data.message, {
+                            type: 'danger',
+                            title: 'Check-in Failed,',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                },
+                error: function (error) {
+                    $("#loading-wrapper").fadeOut(300);
+                    notes.show('Unable to process your checkin request. please try after sometime', {
+                        type: 'danger',
+                        title: 'Check-in Failed,',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        function assignRoom(ReservationNameID) {
+
+            var assignRoomData = {
+                ReservationNameID: ReservationNameID,
+                RoomNumber: $('#txtRoomNumber').val()
+            }
+            $("#loading-wrapper").fadeIn(300);
+            $.ajax({
+                url: BaseURL + '/Reservations/AssignRoom',
+                type: "POST",
+                data: assignRoomData,
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(300);
+                    if (data.result) {
+                        //show success
+                        notes.show("Room assign successfull!", {
+                            type: 'success',
+                            title: 'Room Assign',
+                            icon: '<i class="icon-sentiment_satisfied"></i>'
+                        });
+                    }
+                    else {
+                        notes.show('Unable to do room assign, please try again', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                },
+                error: function (error) {
+                    //show failure
+                    notes.show('Room assignment failed with error ', {
+                        type: 'danger',
+                        title: 'Room Assign Failed,',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        function CutKey(reservationID) {
+            $("#loading-wrapper").fadeIn(300);
+             $.ajax({
+                url: BaseURL + '/Reservations/EncodeKey?ReservationID=' + reservationID,
+                type: "POST",
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(300);
+                    if (data.result) {
+                        //show success
+                        notes.show("Key cutting successfull!", {
+                            type: 'success',
+                            title: 'Cut Key',
+                            icon: '<i class="icon-sentiment_satisfied"></i>'
+                        });
+                    }
+                    else {
+                        notes.show('Unable cut the key, please try again', {
+                            type: 'danger',
+                            title: 'Cut Key',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                },
+                error: function (error) {
+                    $("#loading-wrapper").fadeOut(300);
+                    notes.show('Unable cut the key, please try agai', {
+                        type: 'danger',
+                        title: 'Cut Key',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        function GetStateByCountryID(Obj) {
+            $.ajax({
+                url: BaseURL + '/Reservations/EncodeKey?ReservationID=' + reservationID,
+                type: "POST",
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(300);
+                    if (data.result) {
+                        //show success
+                        notes.show("Key cutting successfull!", {
+                            type: 'success',
+                            title: 'Cut Key',
+                            icon: '<i class="icon-sentiment_satisfied"></i>'
+                        });
+                    }
+                    else {
+                        notes.show('Unable cut the key, please try again', {
+                            type: 'danger',
+                            title: 'Cut Key',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                },
+                error: function (error) {
+                    $("#loading-wrapper").fadeOut(300);
+                    notes.show('Unable cut the key, please try agai', {
+                        type: 'danger',
+                        title: 'Cut Key',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+
+        function OpenSaavyPay(saavyPayURL) {
+
+            window.open(saavyPayURL, '_blank');
+        }
+
+        function DeleteProfile() {
+            $('#profileDeletions').modal('show');
+        }
+
+        function AdditionalInfo() {
+            $('#profileAdditionalFields').modal('show');
+        }
+
+        function ShowLoading() {
+            $("#loading-wrapper").fadeIn(300);
+        }
+
+        var panimage1;
+        var panimage2;
+        var panimage3;
+
+        jQuery(function ($) {
+            if ($('#docImage1').length > 0) {
+                panimage1 = new imagepanner({
+                    wrapper: $('#pcontainer1'), // jQuery selector to image container
+                    imgpos: [100, 300], // initial image position- x, y
+                    maxlevel: 4 // maximum zoom level
+                });
+            }
+
+            if ($('#docImage2').length > 0) {
+                panimage2 = new imagepanner({
+                    wrapper: $('#pcontainer2'), // jQuery selector to image container
+                    imgpos: [100, 300], // initial image position- x, y
+                    maxlevel: 4 // maximum zoom level
+                });
+            }
+
+            if ($('#docImage3').length > 0) {
+                panimage3 = new imagepanner({
+                    wrapper: $('#pcontainer3'), // jQuery selector to image container
+                    imgpos: [100, 300], // initial image position- x, y
+                    maxlevel: 4 // maximum zoom level
+                })
+            }
+        });
+
+        function swapProfile(fromProfileDetailId) {
+            $("#loading-wrapper").fadeIn(300);
+            $.ajax({
+                url: BaseURL + '/Reservations/profileSwap',
+                data: {
+                    "fromProfileDetailId": fromProfileDetailId,
+                    "toProfileDetailId": $('#SwapProfileList').val()
+                },
+                type: "POST",
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(300);
+                    if (data.result) {
+                        //show success
+                        notes.show("Profile Swap Successfull!", {
+                            type: 'success',
+                            title: 'Profile Swap',
+                            icon: '<i class="icon-sentiment_satisfied"></i>'
+                        });
+                        setTimeout(function () {
+                            window.location.href = BaseURL + '/Reservations/Details?ReservationID=' + @Model.ReservationDetailID;
+                        }, 1000);
+                    }
+                    else {
+                        notes.show('Unable to swap profile details', {
+                            type: 'danger',
+                            title: 'Profile Swap',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                },
+                error: function (error) {
+                    $("#loading-wrapper").fadeOut(300);
+                    notes.show('Unable to swap profile details, failed with error', {
+                        type: 'danger',
+                        title: 'Profile Swap',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+        }
+
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+            $("#loading-wrapper").fadeIn(300);
+            var frmDate = $(this).serialize();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                data: frmDate,
+                type: "POST",
+                success: function (data) {
+                    $("#loading-wrapper").fadeOut(300);
+                    if (data.result) {
+                        notes.show('Profile Update successfully', {
+                            type: 'success',
+                            title: 'Profile Update,',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                        $('#profileDeletions').modal('hide');
+                    }
+                    else {
+                        notes.show('Unable to update the profile details to opera ' + data.message, {
+                            type: 'danger',
+                            title: 'Profile Update failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                        $('#profileDeletions').modal('hide');
+                    }
+                },
+                error: function (error) {
+                    $("#loading-wrapper").fadeOut(300);
+                    notes.show('Unable to update the profile details', {
+                        type: 'danger',
+                        title: 'Profile Update failed',
+                        icon: '<i class="icon-alert-triangle"></i>'
+                    });
+                }
+            });
+
+        });
+
+        function rotateImage(imageID) {
+
+            var base64Image = $('#' + imageID).attr('src');
+
+            var offScreenCanvas = document.createElement('canvas');
+            offScreenCanvasCtx = offScreenCanvas.getContext('2d');
+            var img = new Image();
+
+            img.onload = function () {
+                offScreenCanvas.height = img.width;
+                offScreenCanvas.width = img.height;
+                if (true) {
+                    offScreenCanvasCtx.rotate(90 * Math.PI / 180);
+                    offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
+                } else {
+                    offScreenCanvasCtx.rotate(-90 * Math.PI / 180);
+                    offScreenCanvasCtx.translate(-offScreenCanvas.height, 0);
+                }
+                offScreenCanvasCtx.drawImage(img, 0, 0);
+
+                var rotatedImage = offScreenCanvas.toDataURL('image/jpeg', 0.5);
+
+                rotatedImage = rotatedImage.replace('data:image/jpeg;base64,', '');
+                rotatedImage = rotatedImage.replace('data:image/png;base64,', '');
+
+                $('#' + imageID).attr('src', 'data:image/jpeg;base64,' + rotatedImage);
+            };
+
+            img.src = base64Image;
+        }
+
+    </script>
+}
+

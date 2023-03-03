@@ -1,0 +1,69 @@
+﻿@using ReportViewerForMvc
+
+@{
+    ViewBag.Title = "DailyReport";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Marketing</title>
+</head>
+<body>
+    <div>
+        <form action="@Url.Action("DailyReport","DailyReport")" method="post" id="frmReport">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="phone">Start Date</label>
+                            <input type="text" class="form-control datepicker" autocomplete="off" name="FromDate" id="StartDate" placeholder="Enter Start Date" value="@ViewBag.FromDate">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="phone">End Date</label>
+                            <input type="text" class="form-control datepicker" autocomplete="off" name="ToDate" id="EndDate" placeholder="Enter End Date" value="@ViewBag.ToDate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <input type="submit" class="btn btn-primary" value="Generate" />
+                </div>
+            </div>
+        </form>
+      
+        <div>
+            @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer, new { @class = "col-xs-12", style = "width:100%", AsyncRendering = "False", SizeToReportContent = "True" })
+        </div>
+        
+
+        @section Scripts{
+
+
+            <script src="~/Assets/vendor/BootstrapDatePicker/js/bootstrap-datepicker.min.js"></script>
+
+            <script>
+
+                $(document).ready(function () {
+                    $('.datepicker').datepicker({
+                        autoclose: true,
+                        format: "yyyy-mm-dd"
+                    });
+                })
+            </script>
+        }
+    </div>
+</body>
+</html>

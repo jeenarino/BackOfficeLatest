@@ -1,0 +1,370 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+
+}
+
+<h2>Notification List</h2>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body" style="padding: 5px;">
+                <ul class="nav nav-pills">
+                    <li>
+                        @if (ViewBag.Count == 0)
+                        {
+                            <a class="nav-link  @((bool)ViewBag.IsActionTaken ? "" : "active")" href="@Url.Action("Index", "Notification", new { IsActionTaken = false })">Pending</a>
+                        }
+                        else
+                        {
+                            <a class="nav-link  @((bool)ViewBag.IsActionTaken ? "" : "active")" href="@Url.Action("Index", "Notification", new { IsActionTaken = false })"><label class="notification">Pending<span class="badge" id="spn">@ViewBag.Count</span></label></a>
+
+
+                        }
+
+
+                    </li>
+                    <li>
+                        <a class="nav-link @((bool)ViewBag.IsActionTaken?"active":"")" href="@Url.Action("Index","Notification", new { IsActionTaken = true })">Approved</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+
+
+    <div class="row">
+        <div class="col-md-3">
+
+
+            <div class="form-group">
+                <label for="phone">Notification Type</label>
+                @Html.DropDownList("Notificationtype", (SelectList)ViewBag.NotificationTypeList, "-- Select NotificationType--", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-3" id="divbutton">
+            <div class="space30"></div>
+            <input type="button" name="SubmitButon" id="viewButon" value="View" class="btn btn-primary" />
+
+        </div>
+
+    </div>
+</div>
+<input type="button" name="ApproveButon" id="ApproveId" value="Approve Selected Item" class="btn btn-primary" />
+
+
+<table id="fixedHeader" class="table custom-table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Created Date</th>
+            <th>Notification Type</th>
+            <th>Reservation Number</th>
+            <th>DeviceId</th>
+            <th>Message</th>
+
+            <th>Updated Date</th>
+            <th class="right-align">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+</table>
+    </div>
+<div class="modal fade" id="ApproveNotification" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+    <form action="@Url.Action("ApproveNotification","Notification")" method="post">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+
+
+                        <p class="mb-3">Do you Confirm Current Action Completed?</p>
+
+                    </div>
+                </div>
+                <div class="modal-footer custom">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-link danger" data-dismiss="modal">No</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-side">
+                        <button type="submit" class="btn btn-link success">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="hdnnotiId" name="ID" />
+        <input type="hidden" id="hdndrpnotiId" name="drpnotiId" />
+        <input type="hidden" id="hdnaction" value="@ViewBag.ISACTIONTAKEN" name="ISACTIONTAKEN" />
+        <input type="hidden" id="hfnotification" name="notificationID" />
+    </form>
+</div>
+<div class="modal fade" id="WarningNotification" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+   
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">Warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+
+
+                        <p class="mb-3">Documents Not Selected for Approve?</p>
+
+                    </div>
+                </div>
+                <div class="modal-footer custom">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-link danger" data-dismiss="modal">Close</button>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+      
+   
+</div>
+<div class="modal fade" id="ApproveAllNotification" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+    <form action="@Url.Action("ApproveNotification","Notification")" method="post">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+
+
+                        <p class="modalMessageContent">Do you confirm all selected Item to perform Action?</p>
+
+                    </div>
+                </div>
+                <div class="modal-footer custom">
+                    <div class="left-side">
+                        <button type="button" class="btn btn-link danger" data-dismiss="modal">No</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-side">
+                        <button type="submit" class="btn btn-link success">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<input type="hidden" id="hdnnotiId" name="ID" />
+        <input type="hidden" id="hdndrpnotiId" name="drpnotiId" />*@
+        <input type="hidden" id="hdnaction" value="@ViewBag.ISACTIONTAKEN" name="ISACTIONTAKEN" />
+        <input type="hidden" id="hfnotifications" name="notificationID" />
+    </form>
+</div>
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.checkboxes.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+
+
+
+
+    <script>
+        function approvenotification(notificationid) {
+            $("#hdnnotiId").val(notificationid);
+            $('#ApproveNotification').modal('show');
+        }
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            hour = d.getHours();
+            min = d.getMinutes();
+            sec = d.getSeconds();
+
+
+
+            if (hour.toString().length < 2)
+                hour = '0' + hour;
+            if (min.toString().length < 2)
+                min = '0' + min;
+            if (sec.toString().length < 2)
+                sec = '0' + sec;
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+
+
+            if ([year, month, day].join('-') == '1-01-01')
+                return "";
+            else
+                return [year, month, day].join('-') + " " + [hour, min, sec].join(':');
+        }
+
+        $(document).ready(function () {
+            var IsActionTaken=@(ViewBag.IsActionTaken.ToString().ToLower());
+
+            $("#ApproveId").hide();
+            if (IsActionTaken) {
+                $("#ApproveId").hide();
+            } else {
+                $("#ApproveId").show();
+            }
+
+            $('#fixedHeader').on('error.dt', function(e, settings, techNote, message){
+                console.log('An error has been reported by DataTables: ', message );
+                e.preventDefault();
+            });
+
+
+
+            var dt = $('#fixedHeader').DataTable({
+                initComplete: function () {
+                    var api = this.api();
+                    var ActionTaken=@(ViewBag.IsActionTaken.ToString().ToLower());
+
+                    if (ActionTaken) {
+                        // Hide Office column
+                        api.column(0).visible(false);
+                    }
+                    else {
+                        api.column(0).visible(true);
+                    }
+                },
+                "processing": true,
+                "serverSide": true,
+                @*"ajax": "@Url.Action("GetNotificationListAjax", "Notification")?IsActionTaken=@ViewBag.IsActionTaken" + "&Notificationtype="+$("#hdndrpnotiId").val(),*@
+                 "ajax": {
+                url: "@Url.Action("GetNotificationListAjax", "Notification")",
+                type: "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        "Notificationtype": $("#Notificationtype").val(),
+                        "IsActionTaken":'@ViewBag.IsActionTaken',
+                    });
+                }
+                }, 'columnDefs': [
+                    {
+                        'targets': 0,
+                        'checkboxes': {
+                            'selectRow': true
+                        }
+                    }
+                ],
+                'select': {
+                    'style': 'multi'
+                },
+                "columns": [
+
+                    {
+                        "data": "ID",
+
+                    },
+                    {
+
+                        "data": "INSERTEDDATETIME",
+                        "render": function (data, type, row) {
+                            return formatDate(new Date(parseInt(row.INSERTEDDATETIME.substr(6))));
+                        }
+                    },
+                    { "data": "TYPEDESCRIPTION" },
+                    { "data": "ReservationNumber" },
+                    { "data":"DEVICEID"},
+                    { "data": "MESSAGE" },
+
+                    {
+                        "data": "UPDATEDDATETIME",
+                        "render": function (data, type, row) {
+                            $("#spn").val(data.TotalCount);
+                            return formatDate(new Date(parseInt(row.UPDATEDDATETIME.substr(6))));
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            if ('@ViewBag.ISACTIONTAKEN' == 'True')
+                                return '<a  href="#" class="icon red" data-toggle="tooltip" data-placement="top" title="Approved" data-original-title="Approved Notification"><i class="icon-check-square"></i></a>'
+
+                            else
+
+                                return '<a  href="#" class="icon red" onclick="approvenotification(' + row.ID + ')" data-toggle="tooltip" data-placement="top" title="Approve" data-original-title="Approve Notification"><i class="icon-check"></i></a>'
+
+                        }
+
+                    }
+                ],
+                "order": [[0, 'desc']]
+            });
+
+
+            $('#viewButon').on('click', function (e) {
+
+
+                dt.ajax.reload();
+
+
+
+            })
+
+            $('#ApproveId').on('click', function (e) {
+                var rows_selected = dt.column(0).checkboxes.selected();
+                alert(rows_selected)
+                $("#hfnotifications").val(rows_selected.join(","));
+                alert($("#hfnotifications").val())
+                if (rows_selected.join(",") != null && rows_selected.join(",") != '') {
+
+                    $('#ApproveAllNotification').modal('show');
+
+                }
+                else {
+
+                    $('#WarningNotification').modal('show');
+                }
+            });
+
+        });
+
+
+
+
+
+
+
+    </script>
+}
+
+

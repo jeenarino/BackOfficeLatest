@@ -1,0 +1,57 @@
+﻿@model List<DigiDoc.DataAccess.Models.UserRoleModel>
+@{
+    Layout = null;
+    var mainMenuName = "";
+    var subMenuName = "";
+
+}
+@if (Model != null && Model.Count > 0)
+{
+    List<string> iteratedMenuLsit = new List<string>();
+    var parentmenu = Model.Where(x => x.ParentMenu == null).ToList();
+    foreach (var menuItem in parentmenu)
+    {
+        if (!string.IsNullOrEmpty(menuItem.ModuleName) && !iteratedMenuLsit.Contains(menuItem.ModuleName))
+        {
+
+
+
+            var subMenus = Model.FindAll(x => x.ParentMenu == menuItem.ModuleID.ToString());
+            if (subMenus == null || subMenus.Count < 1)
+            {
+                <li>
+                    <a href="@Url.Action(menuItem.FunctionName, menuItem.ControllerName)">
+                        <i class="@menuItem.MenuIcon"></i>
+                        <span class="menu-text">@menuItem.ModuleMenuName</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="@menuItem.MenuIcon"></i>
+                        <span class="menu-text">@menuItem.ModuleMenuName</span>
+                    </a>
+
+                    <div class="sidebar-submenu">
+                        <ul>
+                            @foreach (var sub in subMenus)
+                            {
+                                <li>
+                                    <a href="@Url.Action(sub.FunctionName, sub.ControllerName)">@sub.ModuleMenuName</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+
+            }
+        }
+    }
+}
+<li>
+    <a href="#">
+        <span class="menu-text">Version : 4.4</span>
+    </a>
+</li>

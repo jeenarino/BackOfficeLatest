@@ -1,0 +1,88 @@
+﻿@model IEnumerable<CheckinPortal.BackOffice.Models.CloudPackageMasterModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    
+}
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+}
+
+<h2>Package List</h2>
+<p>
+    @Html.ActionLink("New Package", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table id="fixedHeader" class="table custom-table">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th class="right-align">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.PackageCode
+                </td>
+                <td>
+                    @item.PackageName
+                </td>
+                <td>
+                    @item.PackageDesc
+                </td>
+                <td>
+                    @item.PackageAmount
+                </td>
+                <td>
+                    @item.isActive
+                </td>
+                <td class="right-align">
+                    <div class="td-actions">
+                        <a  href="@Url.Action("Edit","PackageMasters",new { id= item.PackageID })" class="icon red" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Record">
+                            <i class="icon-pencil"></i>
+                        </a>
+                        <a style="display:none" href="@Url.Action("Delete","PackageMasters",new { ReservationID = item.PackageID })" class="icon green"
+                           data-toggle="tooltip" data-placement="top" title="" data-original-title="View Record">
+                            <i class="icon-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+
+</table>
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#fixedHeader').DataTable({
+                fixedHeader: true,
+                'iDisplayLength': 10,
+                "language": {
+                    "lengthMenu": "Display _MENU_ Records Per Page",
+                    "info": "Showing Page _PAGE_ of _PAGES_",
+                }
+            });
+        });
+
+    </script>
+}

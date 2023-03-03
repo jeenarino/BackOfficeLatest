@@ -1,0 +1,30 @@
+﻿V3.0
+1) Addedd arrival date and departure date in the request module (list) as per the ticket number 297
+2) Additional Fields are displayed in the rreservation detail page
+3) Added saavy pay additional security feautre while calling the saavy pay url using cookies
+4) Added additional saavy pay url buton in the reservation list itself
+v4.0
+1)Added gender issue
+v4.1
+1)Added Audit Report Page
+v4.2
+1)Added Notification Controller
+2)Added QR code in User Master
+
+v4.3
+1)Added date desc sorting default in audit trail
+2)Added  general tab as defult in reservation number 
+3)Added dropdoen for Notification Type in notification
+
+v4.4
+1)Added DeviceId in notification with sorting
+2)Added QrCode generation based on QRCODE in user apge
+v4.4.1
+1)disabled except username,QRCode,DisplayName,IsActive in user edit page
+v4.4.2
+1)Disable password and confirm password for the usertype guest.By default guest usertype will show as selected
+v4.4.3
+1)Added ETA Report on 29-06-2022
+v4.5
+1)Added Smarttap
+2)Added Menu based on db

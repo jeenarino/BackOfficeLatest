@@ -1,0 +1,158 @@
+﻿@model CheckinPortal.BackOffice.Models.CloudPackageMasterModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<CheckinPortal.BackOffice.Models.RoomTypeMasterModel> RoomTypeList = new List<CheckinPortal.BackOffice.Models.RoomTypeMasterModel>();
+    if (ViewBag.RoomTypeList != null)
+    {
+        RoomTypeList = (List<CheckinPortal.BackOffice.Models.RoomTypeMasterModel>)ViewBag.RoomTypeList;
+    }
+}
+
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+    <style>
+        .btn-group {
+            background: #fefcf7;
+            border: 1px solid #e4dacd;
+            width: 100%;
+        }
+        .btn-group button{
+            text-align:left;
+        }
+
+        .dropdown-toggle::after {
+            vertical-align: middle;
+            float: right;
+            margin: 7px;
+        }
+    </style>
+}
+
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "PackageMasters", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Package Master</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        
+        @Html.LabelFor(model => model.PackageCode, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.PackageCode, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PackageCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PackageName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.PackageName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PackageName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PackageAmount, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.PackageAmount, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PackageAmount, "", new { @class = "text-danger" })
+            <span>nett price</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Units, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Units, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Units, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group col-md-10">
+        <label for="exampleFormControlTextarea1">Package Description</label><span> (Max length: 500 )</span>
+        <textarea name="PackageDesc" id="PackageDesc" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="form-group ">
+        @Html.Label("RoomTypes", "Upsell Allowed Room Types", htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                <select id="multiple-checkboxes" name="RoomTypes" multiple="multiple" class="custom-select my-1 mr-sm-2 form-control">
+                    @foreach (var roomtype in RoomTypeList)
+                    {
+                        <option @(roomtype.RoomTypeCode == "BKO" ? "selected" : "") value="@roomtype.RoomTypeCode">@roomtype.RoomTypeCode</option>
+                    }
+                </select>
+                @Html.ValidationMessage("PacImage", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.isActive, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.EditorFor(model => model.isActive)
+                @Html.ValidationMessageFor(model => model.isActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.isRoomUpsell, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.EditorFor(model => model.isRoomUpsell)
+                @Html.ValidationMessageFor(model => model.isRoomUpsell, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PackageImage, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <div class="checkbox">
+                <input type="file" name="PackageImage" value="" />
+                @Html.ValidationMessage("PacImage", new { @class = "text-danger" })
+            </div>
+        </div>
+        <span>270 x 170</span>
+    </div>
+
+
+
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $('#multiple-checkboxes').multiselect({
+                includeSelectAllOption: true,
+            });
+        });
+    </script>
+}

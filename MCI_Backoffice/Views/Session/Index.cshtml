@@ -1,0 +1,57 @@
+﻿@model CheckinPortal.BackOffice.Models.LoginModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+
+@using (Html.BeginForm("Login","Session",FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="row justify-content-md-center">
+        <div class="col-xl-4 col-lg-5 col-md-6 col-sm-12">
+            <div class="login-screen">
+                <div class="login-box" style="text-align:center">
+                    <a href="#" class="login-logo1">
+                        <img src="~/Assets/img/logo.png" alt="Swissotel" style="max-width:270px" />
+                    </a>
+                    <br />
+                    <br />
+                    <h5><br />
+                    </h5>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", placeholder = "User Name" } })
+                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "Password" } })
+                            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="actions mb-4">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="RememberPassword" name="RememberPassword">
+                            <label class="custom-control-label" for="RememberPassword">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                    @*<div class="forgot-pwd">
+                        <a class="link" href="forgot-pwd.html">Forgot password?</a>
+                    </div>*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

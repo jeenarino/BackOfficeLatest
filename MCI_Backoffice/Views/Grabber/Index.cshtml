@@ -1,0 +1,304 @@
+﻿
+@{
+    ViewBag.Title = "Grabber";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <h4>Push/Fetch Reservation</h4>
+                <hr />
+                <div class="form-group">
+                    @Html.Label("Confirmation Number", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.TextBox("txtConfirmationNo", null, new { @class = "form-control text-box single-line" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="button" value="Send Precheckin Link" onclick="sendPrecheckinLink()" class="btn btn-primary" />
+                        <input type="button" value="Send Precheckout Link" onclick="sendPrecheckoutLink()" class="btn btn-danger" />
+                        <input type="button" value="Fetch Precheckin" onclick="fetchPreCheckionReservationStatus()" class="btn btn-primary" />
+                        <input type="button" value="Fetch Precheckout" onclick="fetchPreCheckoutReservationStatus()" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="vCenterModal" tabindex="-1" role="dialog" aria-labelledby="vCenterModalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vCenterModalTitle">Fetching Reservation Please Wait</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-6 col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Reservation Status</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 250px;">
+                                <div class="customScroll5" style="overflow: scroll; width: 550px; height: 250px;">
+                                    <div class="todo-container">
+                                        <ul class="todo-body" id="reservationStatus">
+                                            
+
+                                        </ul>
+                                    </div>
+                                </div><div class="slimScrollBar" style="background: rgb(236, 232, 226); width: 5px; position: absolute; top: 0px; opacity: 0.8; display: none; border-radius: 0px; z-index: 99; right: 1px; height: 109.266px;"></div><div class="slimScrollRail" style="width: 5px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 0px; background: rgb(236, 232, 226); opacity: 0.2; z-index: 90; right: 1px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+
+    @*<script src="~/Assets/vendor/datatables/custom/custom-datatables.js"></script>*@
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            //var table = $('#fixedHeader').DataTable({
+            //    fixedHeader: true,
+            //    'iDisplayLength': 25,
+            //    "language": {
+            //        "lengthMenu": "Display _MENU_ Records Per Page",
+            //        "info": "Showing Page _PAGE_ of _PAGES_",
+            //    }
+            //});
+        });
+
+        function ShowLoading() {
+            $("#loading-wrapper").fadeIn(300);
+        }
+
+        function sendPrecheckinLink() {
+            var confirmationNo = $('#txtConfirmationNo').val();
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+
+                $.ajax({
+                    url: "@Url.Action("SendPrecheckinLink","Grabber")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+                        $("#loading-wrapper").fadeOut(300);
+                        if (data.result) {
+                            notes.show(data.message, {
+                                type: 'success',
+                                title: 'Success',
+                                icon: '<i class="icon-sentiment_satisfied"></i>'
+                            });
+                        }
+                        else {
+                            notes.show(data.message, {
+                                type: 'danger',
+                                title: 'Failed',
+                                icon: '<i class="icon-alert-triangle"></i>'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        $("#loading-wrapper").fadeOut(300);
+                        notes.show('Unable to send precheckin link', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                });
+            }
+        }
+
+
+
+        function sendPrecheckoutLink() {
+            var confirmationNo = $('#txtConfirmationNo').val();
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+
+                $.ajax({
+                    url: "@Url.Action("SendPrecheckoutLink", "Grabber")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+                        $("#loading-wrapper").fadeOut(300);
+                        if (data.result) {
+                            notes.show(data.message, {
+                                type: 'success',
+                                title: 'Success',
+                                icon: '<i class="icon-sentiment_satisfied"></i>'
+                            });
+                        }
+                        else {
+                            notes.show(data.message, {
+                                type: 'danger',
+                                title: 'Failed',
+                                icon: '<i class="icon-alert-triangle"></i>'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        $("#loading-wrapper").fadeOut(300);
+                        notes.show('Unable to send precheckout link', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                });
+            }
+        }
+
+        function fetchPreCheckionReservationStatus() {
+              var confirmationNo = $('#txtConfirmationNo').val();
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+                $.ajax({
+                    url: "@Url.Action("FetchPreCheckinReservationStatus", "Grabber")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+
+                        if (data.result) {
+                            $("#loading-wrapper").fadeOut(300);
+                            //show reservation status
+                            $('#vCenterModal').modal('show');
+
+                            $(data.responseData).each(function (index,element) {
+                                $('#reservationStatus').append('<li class="todo-list ' + (element.MessageStatus ? "done" : "") + '"><div class="todo-info"><span class="dot blue"></span><p>' + element.MessageDescription + '</p></div></li>');
+                            });
+
+                            setTimeout(function () {
+                                //proceed with fetching
+                                fetchPreCheckionReservation(confirmationNo)
+                            }, 5000);
+                        }
+                        else {
+                            $("#loading-wrapper").fadeOut(300);
+                            notes.show('Unable to fetch reservation', {
+                                type: 'danger',
+                                title: 'Failed',
+                                icon: '<i class="icon-alert-triangle"></i>'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        $("#loading-wrapper").fadeOut(300);
+                        notes.show('Unable to fetch reservation', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                });
+            }
+        }
+
+        function fetchPreCheckoutReservationStatus() {
+              var confirmationNo = $('#txtConfirmationNo').val();
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+                $.ajax({
+                    url: "@Url.Action("FetchPreCheckoutReservationStatus", "Grabber")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+
+                        if (data.result) {
+                            $("#loading-wrapper").fadeOut(300);
+                            //show reservation status
+                            $('#vCenterModal').modal('show');
+
+                            $(data.responseData).each(function (index,element) {
+                                $('#reservationStatus').append('<li class="todo-list ' + (element.MessageStatus ? "done" : "") + '"><div class="todo-info"><span class="dot blue"></span><p>' + element.MessageDescription + '</p></div></li>');
+                            });
+
+                            setTimeout(function () {
+                                //proceed with fetching
+                                fetchPreCheckionReservation(confirmationNo)
+                            }, 5000);
+                        }
+                        else {
+                            $("#loading-wrapper").fadeOut(300);
+                            notes.show('Unable to fetch reservation', {
+                                type: 'danger',
+                                title: 'Failed',
+                                icon: '<i class="icon-alert-triangle"></i>'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        $("#loading-wrapper").fadeOut(300);
+                        notes.show('Unable to fetch reservation', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                });
+            }
+        }
+
+        function fetchPreCheckionReservation(confirmationNo) {
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+                $.ajax({
+                    url: "@Url.Action("FetchPreCheckinReservation", "Grabber")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+                        $('#vCenterModal').modal('hide');
+
+                        notes.show('Reservation Fetch successfully', {
+                            type: 'success',
+                            title: 'Success',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+
+                        setTimeout(function () {
+                            //proceed with fetching
+                            window.location.href = "@Url.Action("ReservationDetails", "Reservations")?ConfirmationNumber=" + confirmationNo
+                        }, 1000);
+
+                       //Once fetch success. redirect to reservation details page.
+
+                    },
+                    error: function (error) {
+                        $("#loading-wrapper").fadeOut(300);
+                        $('#vCenterModal').modal('hide');
+                        notes.show('Unable to fetch reservation', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                });
+            }
+        }
+
+    </script>
+}

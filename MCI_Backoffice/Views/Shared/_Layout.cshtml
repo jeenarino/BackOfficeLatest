@@ -1,0 +1,374 @@
+﻿
+@{
+    var ssrs_dailyReportURL = CheckinPortal.BackOffice.Helpers.ConfigurationHelper.Instance.ReportConfig.ReportBaseURL + "DailyReport";
+    var ssrs_marketingReportURL = CheckinPortal.BackOffice.Helpers.ConfigurationHelper.Instance.ReportConfig.ReportBaseURL + "MarketingEmailReport";
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="Webcheckin for hotels">
+    <meta name="author" content="Webcheckin">
+    <link rel="shortcut icon" href="img/fav.png" />
+    <!-- Title -->
+    <title>Backoffice Module</title>
+
+    <!-- *************
+        ************ Common Css Files *************
+    ************ -->
+    <!-- Bootstrap css -->
+    <link rel="stylesheet" href="~/Assets/css/bootstrap.min.css">
+    <!-- Icomoon Font Icons css -->
+    <link rel="stylesheet" href="~/Assets/fonts/style.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="~/Assets/css/main.css">
+
+    <!-- Notify -->
+    <link rel="stylesheet" href="~/Assets/vendor/notify/notify-flat.css" />
+
+    <link href="~/Assets/css/jquery-confirm.min.css" rel="stylesheet" />
+
+    <style>
+        .isDisabled {
+            color: currentColor;
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-decoration: none;
+        }
+    </style>
+    <!--*************
+    ************ Vendor Css Files *************
+    ************ -->
+    @RenderSection("Styles", false);
+    <script>
+        var getUrl = window.location;
+        var BaseURL = getUrl.protocol + "//" + getUrl.host
+        //var BaseURL = "@Request.Url.GetLeftPart(UriPartial.Authority)";
+    </script>
+</head>
+
+<body>
+
+    <!-- Loading starts -->
+    <div id="loading-wrapper">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Loading ends -->
+    <!-- Page wrapper start -->
+    <div class="page-wrapper">
+
+        <!-- Sidebar wrapper start -->
+        <nav id="sidebar" class="sidebar-wrapper">
+
+            <!-- Sidebar brand start  -->
+            <div class="sidebar-brand">
+                <a href="@Url.Action("Index","Reservations")" class="logo">
+                    <img src="~/Assets/img/logo.png" alt="Swissotel" />
+                </a>
+            </div>
+            <!-- Sidebar brand end  -->
+            <!-- User profile start -->
+            <div class="sidebar-user-details" @*style="display:none"*@>
+                <div class="user-profile">
+                    <img src="~/Assets/img/avatar.png" class="profile-thumb" alt="User Thumb">
+                    <h6 class="profile-name">@Session["UserName"]</h6>
+                    <ul class="profile-actions">
+                        @*<li>
+                                <a href="javascript:void(0)">
+                                    <i class="icon-gitlab"></i>
+                                    <span class="count-label green"></span>
+                                </a>
+                            </li>*@
+                        <li>
+                            <h4>
+                                <a href="@Url.Action("Logout","Session")">
+                                    <i class="icon-exit_to_app"></i> Logout
+                                </a>
+                            </h4>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- User profile end -->
+            <!-- Sidebar content start -->
+            <div class="sidebar-content">
+
+                <!-- sidebar menu start -->
+                <div class="sidebar-menu">
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("Index","Reservations")">
+                                <i class="icon-home2"></i>
+                                <span class="menu-text">Reservations</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index","Requests")">
+                                <i class="icon-home2"></i>
+                                <span class="menu-text">Upgrade</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index","Grabber")">
+                                <i class="icon-home2"></i>
+                                <span class="menu-text">Push / Fetch</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index","Notification")">
+                                <i class="icon-home2"></i>
+                                <span class="menu-text">Notification</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index","EVA")">
+                                <i class="icon-home2"></i>
+                                <span class="menu-text">EVA</span>
+                            </a>
+                        </li>
+                        @if (Session["LoggedInUser"] != null)
+                        {
+                            var sessionUser = (CheckinPortal.BackOffice.DataAccess.tbUserMaster)Session["LoggedInUser"];
+
+                            if (sessionUser.tbRoleMaster.IsAdmin)
+                            {
+
+                                <li class="sidebar-dropdown">
+                                    <a href="#">
+                                        <i class="icon-calendar1"></i>
+                                        <span class="menu-text">Masters</span>
+                                    </a>
+                                    <div class="sidebar-submenu">
+                                        <ul>
+                                            <li>
+                                                <a href="@Url.Action("Index", "PackageMasters")">Packages</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "CardTypeMasters")">Card Types</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "DocumentMasters")">Document Types</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "PaymentTypeMasters")">Payment Types</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "RequestTypeMasters")">Request Types</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "ReservationDocumentTypeMasters")">Reservation Documents Types</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "StateMasters")">States</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "CountryMasters")">Country</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="sidebar-dropdown">
+                                    <a href="#">
+                                        <i class="icon-layers2"></i>
+                                        <span class="menu-text">User Management</span>
+                                    </a>
+                                    <div class="sidebar-submenu">
+                                        <ul>
+                                            <li>
+                                                <a href="@Url.Action("Index", "RoleMasters")">Roles</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "UserMasters")">Users</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="sidebar-dropdown">
+                                    <a href="#">
+                                        <i class="icon-layers2"></i>
+                                        <span class="menu-text">Smart Tap Masters</span>
+                                    </a>
+                                    <div class="sidebar-submenu">
+                                        <ul>
+                                            <li>
+                                                <a href="@Url.Action("Index", "OutletMaster")">Outlet Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "OutletUserMaster")">OutletUser Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Create", "GeneralSettings")">General Setting</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Index", "GeneralPackages")">General Packages</a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="sidebar-dropdown">
+                                    <a href="#">
+                                        <i class="icon-layers2"></i>
+                                        <span class="menu-text">Smart Tap Reports</span>
+                                    </a>
+                                    <div class="sidebar-submenu">
+                                        <ul>
+                                            <li>
+                                                <a href="@Url.Action("OutletCumulativeReport", "OutletCumulativeReport")">Outlet Cumulative Report</a>
+                                            </li>
+
+
+                                        </ul>
+                                    </div>
+                                </li>
+
+
+                            }
+                        }
+
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="icon-layers2"></i>
+                                <span class="menu-text">Reports</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        @*<a target="_blank" href="@ssrs_dailyReportURL">Daily Report</a>*@
+                                        <a href="@Url.Action("DailyReport", "DailyReport")">Daily Report</a>
+                                    </li>
+                                    <li>
+                                        @*<a target="_blank" href="@ssrs_marketingReportURL">Marketing Report</a>*@
+                                        <a href="@Url.Action("Marketing", "Reports")">Marketing Report</a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("AuditReport","AuditReports")">
+                                            AuditReport
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index","ETAreport")">
+                                            ETAReport
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        @*<li>
+            <a target="_blank" href="@ssrs_reportBaseURL">
+                <i class="icon-home2"></i>
+                <span class="menu-text">Report</span>
+            </a>
+        </li>*@
+                        <li>
+                            <a href="@Url.Action("Index", "BIDashboard")">
+                                <i class="icon-home2"></i>
+                                <span class="menu-text">BI Report</span>
+                            </a>
+                        </li>
+                        <li>
+
+                            <a href="#">
+                                <span class="menu-text">Version : 4.4</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+                <!-- sidebar menu end -->
+
+            </div>
+            <!-- Sidebar content end -->
+
+        </nav>
+        <!-- Sidebar wrapper end -->
+        <!-- Page content start  -->
+        <div class="page-content">
+            <div id="messages"></div>
+            <div id="notes"></div>
+            <!-- Main container start -->
+            <div class="main-container">
+                @RenderBody()
+            </div>
+            <!-- Main container end -->
+        </div>
+        <!-- Page content end -->
+    </div>
+    <!-- Page wrapper end -->
+    <!--**************************
+        **************************
+            **************************
+                        Required JavaScript Files
+            **************************
+        **************************
+    **************************-->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+
+
+    <script src="~/Assets/js/jquery.min.js"></script>
+    <script src="~/Assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Assets/js/moment.js"></script>
+
+    <!-- *************
+        ************ Vendor Js Files *************
+    ************* -->
+    <!-- Slimscroll JS -->
+    <script src="~/Assets/vendor/slimscroll/slimscroll.min.js"></script>
+    <script src="~/Assets/vendor/slimscroll/custom-scrollbar.js"></script>
+
+    <script src="~/Assets/js/jquery.easing.1.3.js"></script>
+    <script src="~/Assets/vendor/notify/notify.js"></script>
+
+    <script src="~/Assets/js/jquery-confirm.min.js"></script>
+    <script>
+        var messages = $('#messages').notify({
+            type: 'messages',
+            removeIcon: '<i class="icon-close"></i>'
+        });
+        var notes = $('#notes').notify({
+            removeIcon: '<i class="icon-close"></i>'
+        });
+    </script>
+
+    @RenderSection("Scripts", false);
+
+
+    <script>
+        $(document).ready(function () {
+
+            //$.confirm({
+            //    title: 'Confirm!',
+            //    content: 'Sharer reservation found, would you like to chekin sharer resrvation?',
+            //    buttons: {
+            //        yes: function () {
+            //            $.alert('yes!');
+            //        },
+            //        no: function () {
+            //            $.alert('no!');
+            //        },
+            //        cancel: function () {
+            //            $.alert('Canceled!');
+            //        }
+            //    }
+            //});
+
+        });
+    </script>
+    <!-- Main JS -->
+    <script src="~/Assets/js/main.js"></script>
+
+</body>
+</html>

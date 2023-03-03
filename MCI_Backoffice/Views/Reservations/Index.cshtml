@@ -1,0 +1,323 @@
+﻿
+@model List<CheckinPortal.BackOffice.DataAccess.usp_GetReservationList_Result>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+}
+<h2>Reservation List</h2>
+
+
+    <div class="col-md-12">
+
+
+        <div class="row">
+            <form @*action="@Url.Action("CheckReservation", "Reservations")" method="post"*@ id="frmReservation" class="form-group">
+
+                <div class="col-md-12">
+
+
+                    <div >
+
+                        @Html.Label("Search Future  Confirmation Number", htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.TextBox("ConfirmationNo", null, new { @class = "form-control text-box single-line", @id = "txtConfirmation" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" id="divbutton">
+                    <div class="space30"></div>
+                    <input type="button" name="SubmitButon" id="viewButon" value="View" class="btn btn-primary" onclick="SearchReservation()">
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body" style="padding: 5px;">
+                <ul class="nav nav-pills">
+                    <li>
+                        <a class="nav-link @(ViewBag.ReservationGroup == "PreCheckin" ? "active":"")" href="@Url.Action("Index","Reservations", new { ReservationGroup = "PreCheckin" })">Pre-Checked-in</a>
+                    </li>
+                    <li>
+                        <a class="nav-link @(ViewBag.ReservationGroup == "PreCheckOut" ? "active":"")" href="@Url.Action("Index","Reservations", new { ReservationGroup = "PreCheckOut" })">Pre-Checked-out</a>
+                    </li>
+                    <li>
+                        <a class="nav-link @(ViewBag.ReservationGroup == "Normal" ? "active":"")" href="@Url.Action("Index","Reservations", new { ReservationGroup = "Normal" })">General</a>
+                    </li>
+                    @*Added new tab in version v.3.0.1*@
+                    <li>
+                        <a class="nav-link @(ViewBag.ReservationGroup == "DueOut" ? "active":"")" href="@Url.Action("Index","Reservations", new { ReservationGroup = "DueOut" })">DueOut</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="display:none">
+    <div class="col-md-6">
+        <input type="text" value="" id="txtPrecheckinConfirmationNo" />
+        <input type="button" value="Send Precheckin Link" onclick="sendPrecheckinLink()" />
+    </div>
+    <div class="col-md-6">
+        <input type="text" value="" id="txtPrecheckoutConfirmationNo" />
+        <input type="button" value="Send Precheckout Link" onclick="sendPrecheckoutLink()" />
+    </div>
+</div>
+<table id="fixedHeader" class="table custom-table">
+    <thead>
+        <tr>
+            <th>Confirmation No</th>
+            <th>Room No</th>
+            <th>Guest Full Name</th>
+            <th>Arrival Date</th>
+            <th>Departure Date</th>
+            <th>Adult/Child</th>
+            <th>Upgrade Action</th>
+            @*<th>Reservation Type</th>*@
+            <th class="right-align">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+
+    <script>
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        $(document).ready(function () {
+
+            //$("#frmReservation").submit(function () {
+
+            //    $("#loading-wrapper").fadeIn(300);
+            //});
+            $('#fixedHeader').on('error.dt', function(e, settings, techNote, message){
+                console.log('An error has been reported by DataTables: ', message );
+                e.preventDefault();
+            });
+
+
+
+            var dt = $('#fixedHeader').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": "@Url.Action("GetReservationListAjax", "Reservations")?ReservationGroup=@ViewBag.ReservationGroup",
+                "columns": [
+                    { "data": "ReservationNumber" },
+                    { "data": "RoomNumber" },
+                    {
+                        "data": "LastName",
+                        "render": function (data, type, row) {
+                            //return row.LastName + (row.FirstName ? row.FirstName : "");
+                            return (row.FirstName ? row.FirstName : '') + (row.MiddleName ?  " " + row.MiddleName : '' )+ ( row.LastName ? " "+row.LastName : '');
+                            //return (row.FirstName ? row.FirstName : '') + ' ' + row.MiddleName ? row.MiddleName : '' + ' ' + row.LastName ? row.LastName : '';
+                        }
+                    },
+                    {
+
+                        "data": "ArrivalDate",
+                        "render": function (data, type, row) {
+                            return  formatDate(new Date(parseInt(row.ArrivalDate.substr(6))));
+                        }
+                    },
+                    {
+                        "data": "DepartureDate",
+                        "render": function (data, type, row) {
+                            return formatDate(new Date(parseInt(row.DepartureDate.substr(6))));
+                        }
+                    },
+                    {
+                        "data": "Adultcount",
+                        "render": function (data, type, row) {
+                            return row.Adultcount + '/' + row.Childcount;
+                        }
+                    },
+                    { "data": "RequestStatus" },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            return '<div class="td-actions"><a href="@Url.Action("Details","Reservations")?ReservationID=' + row.ReservationDetailID + '" onclick="ShowLoading()" class="icon green" data-toggle="tooltip" data-placement="left" title="Details" data-original-title="View Record"> <i class="icon-receipt"></i></a></div><div class="td-actions"><a href="@Url.Action("OpenSaavyPay", "Reservations")?reservationID=' + row.ReservationDetailID + '" target="_blank" class="icon blue" data-toggle="tooltip" data-placement="right" title="Saavy Pay" data-original-title="View Record"> <i class="icon-dollar-sign"></i></a></div>'
+                        }
+
+                    }
+                ],
+               // "order": [[1, 'asc']]
+            });
+
+
+
+            //var table = $('#fixedHeader').DataTable({
+            //    fixedHeader: true,
+            //    'iDisplayLength': 25,
+            //    "language": {
+            //        "lengthMenu": "Display _MENU_ Records Per Page",
+            //        "info": "Showing Page _PAGE_ of _PAGES_",
+            //    }
+            //});
+        });
+
+        function ShowLoading() {
+            $("#loading-wrapper").fadeIn(300);
+        }
+
+        function sendPrecheckinLink() {
+            var confirmationNo = $('#txtPrecheckinConfirmationNo').val();
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+
+                $.ajax({
+                    url: "@Url.Action("SendPrecheckinLink","Reservations")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+                        $("#loading-wrapper").fadeOut(300);
+                        if (data.result) {
+                            notes.show(data.message, {
+                                type: 'success',
+                                title: 'Success',
+                                icon: '<i class="icon-sentiment_satisfied"></i>'
+                            });
+                        }
+                        else {
+                            notes.show(data.message, {
+                                type: 'danger',
+                                title: 'Failed',
+                                icon: '<i class="icon-alert-triangle"></i>'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        $("#loading-wrapper").fadeOut(300);
+                        notes.show('Unable to send precheckin link', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                });
+            }
+        }
+
+
+
+        function sendPrecheckoutLink() {
+            var confirmationNo = $('#txtPrecheckoutConfirmationNo').val();
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+
+                $.ajax({
+                    url: "@Url.Action("SendPrecheckoutLink","Reservations")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+                        $("#loading-wrapper").fadeOut(300);
+                        if (data.result) {
+                            notes.show(data.message, {
+                                type: 'success',
+                                title: 'Success',
+                                icon: '<i class="icon-sentiment_satisfied"></i>'
+                            });
+                        }
+                        else {
+                            notes.show(data.message, {
+                                type: 'danger',
+                                title: 'Failed',
+                                icon: '<i class="icon-alert-triangle"></i>'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        $("#loading-wrapper").fadeOut(300);
+                        notes.show('Unable to send precheckout link', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+                });
+            }
+        }
+
+
+        function SearchReservation() {
+            var confirmationNo = $('#txtConfirmation').val();
+            if (confirmationNo) {
+                $("#loading-wrapper").fadeIn(300);
+               
+                $.ajax({
+                    url: "@Url.Action("CheckReservation", "Reservations")?ConfirmationNo=" + confirmationNo,
+                    success: function (data) {
+                        debugger;
+                       
+                        if (data.result) {
+
+                           
+                           
+                            window.location.href = '/Reservations/Details?ReservationID=' + data.message;
+                            ;
+                        }
+                        else {
+                            $("#loading-wrapper").fadeOut(300);
+                            notes.show('Reservation Not Found', {
+                                type: 'danger',
+                                title: 'Failed',
+                                icon: '<i class="icon-alert-triangle"></i>'
+                            });
+                        }
+                        //write something
+                    },
+                    error: function () {
+                        $("#loading-wrapper").fadeOut(300);
+                        notes.show('Reservation Not Found', {
+                            type: 'danger',
+                            title: 'Failed',
+                            icon: '<i class="icon-alert-triangle"></i>'
+                        });
+                    }
+
+                });
+            }
+            else {
+                notes.show('confirmation Number Reuired', {
+                    type: 'danger',
+                    title: 'Failed',
+                    icon: '<i class="icon-alert-triangle"></i>'
+                });
+
+            }
+
+        }
+
+
+    </script>
+}
+
+
+

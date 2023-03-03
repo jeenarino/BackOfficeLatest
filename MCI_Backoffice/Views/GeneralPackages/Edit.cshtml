@@ -1,0 +1,80 @@
+﻿@model CheckinPortal.BackOffice.Models.SmartTap.GeneralPackages
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+   
+}
+
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+    <style>
+        .btn-group
+        {
+            background: #fefcf7;
+            border: 1px solid #e4dacd;
+            width: 100%;
+        }
+
+            .btn-group button
+            {
+                text-align: left;
+            }
+
+        .dropdown-toggle::after
+        {
+            vertical-align: middle;
+            float: right;
+            margin: 7px;
+        }
+    </style>
+}
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "GeneralPackages", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Package Master</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.PackageId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PackageCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PackageCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PackageCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group col-md-10">
+            <label for="exampleFormControlTextarea1">Package Description</label>
+            <textarea name="PackageDescription" id="PackageDescription" class="form-control" rows="3">@Model.PackageDescription</textarea>
+            @Html.ValidationMessageFor(model => model.PackageDescription, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+   
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+           
+        });
+    </script>
+}
+

@@ -1,0 +1,176 @@
+﻿
+@{
+    ViewBag.Title = "Declarations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model CheckinPortal.BackOffice.DataAccess.usp_GetReservationListDetails_Result
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<CheckinPortal.BackOffice.DataAccess.Usp_FeedbackData_Result> FeedBacks = null;
+    if (ViewBag.FeedBackData != null)
+    {
+        FeedBacks = (List<CheckinPortal.BackOffice.DataAccess.Usp_FeedbackData_Result>)ViewBag.FeedBackData;
+    }
+
+}
+
+@section Styles{
+    <style>
+        .page-header {
+            /*margin: 0 0 -65px 0 !important;*/
+        }
+
+        .value-label {
+            font-size: 14px;
+        }
+    </style>
+    <link href="~/Assets/vendor/gallery/gallery.css" rel="stylesheet" />
+
+}
+
+<!-- Row start -->
+<div class="page-header">
+
+    <!-- Breadcrumb start -->
+    <ul class="nav nav-pills">
+        @for (int i = 0; i < Model.Adultcount; i++)
+        {
+            string TabName = "Primary Guest";
+            if (i > 0)
+            {
+                TabName = $"Accompany Guest {i}";
+            }
+
+            <li>
+                <a class="nav-link" href="@Url.Action("Details","Reservations",new { ReservationID = Model.ReservationDetailID, GuestIndex = i })">@TabName</a>
+            </li>
+        }
+
+        @{
+            if (ViewBag.RegCardFolio != null)
+            {
+                var ResDocuments = (List<CheckinPortal.BackOffice.DataAccess.usp_GetReservationDocuments_Result>)ViewBag.RegCardFolio;
+
+                foreach (var doc in ResDocuments)
+                {
+                    <li>
+                        <a class="nav-link @(doc.DocumentType == ViewBag.DocumentType ? "active" : "")" href="@Url.Action("Documents","Reservations",new { ReservationDocumentID = doc.ReservationdocumentID , ReservationID = doc.ReservationDetailID})">@doc.DocumentType</a>
+                    </li>
+                }
+            }
+
+        }
+
+        @{
+            if (ViewBag.FeedBackData != null)
+            {
+                <li>
+                    <a class="nav-link" href="@Url.Action("Declarations","Reservations",new { ReservationID = Model.ReservationDetailID})">Declaration</a>
+                </li>
+            }
+        }
+
+        <li>
+            <a class="nav-link" href="@Url.Action("ReservationUpsellDetails","Reservations",new { ReservationID = Model.ReservationDetailID})">Upgrade</a>
+        </li>
+
+    </ul>
+    <!-- Breadcrumb end -->
+
+
+</div>
+<div>
+
+</div>
+
+<div class="row gutters">
+    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="account-settings">
+                    <div class="user-profile">
+                        <h4>Confirmation No</h4>
+                        <h5 class="user-name"> @Model.ReservationNumber</h5>
+                    </div>
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <h6 class="mb-3 text-primary">Reservation Details</h6>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <h4><label for="eMail">Arrival Date</label><br /></h4>
+                                <h5><label class="value-label" id="ArrivalDate" placeholder="Arrival date">@(Model.ArrivalDate.HasValue ? Model.ArrivalDate.Value.ToString("dd MMM yyyy") : "")</label></h5>
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <h4><label for="eMail">Arrival Date</label><br /></h4>
+                                <h5><label class="value-label" id="ArrivalDate" placeholder="Arrival date">@(Model.DepartureDate.HasValue ? Model.DepartureDate.Value.ToString("dd MMM yyyy") : "")</label></h5>
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="website">Adult/Child</label><br /></h4>
+                                    <h5><label class="value-label" id="ArrivalDate" placeholder="Arrival date">@Model.Adultcount / @Model.Childcount</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <h4><label for="fullName">Room Type</label><br /></h4>
+                                    <h5><label class="value-label" id="ArrivalDate" placeholder="Arrival date">@Model.RoomTypeDescription</label></h5>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9 col-lg-8 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-body">
+
+                @if (FeedBacks != null)
+                {
+                    foreach (var question in FeedBacks)
+                    {
+                        <div class="search-result">
+                            <a href="#">@question.Question</a>
+                            <p class="desc">@question.Answer</p>
+                        </div>
+                    }
+
+                    <div class="search-result">
+                        <a class="btn btn-primary" target="_blank" href="@Url.Action("DownloadDeclaration","Reservations",new { ReservationID = Model.ReservationDetailID })">Download as PDF.</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="search-result">
+                        <a href="#">Declaration Not found.</a>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Assets/vendor/gallery/baguetteBox.js"></script>
+    <script src="~/Assets/vendor/gallery/plugins.js"></script>
+    <script src="~/Assets/vendor/gallery/custom-gallery.js"></script>
+}
+
+
+

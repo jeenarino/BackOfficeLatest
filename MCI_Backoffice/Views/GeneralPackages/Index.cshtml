@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+
+}
+
+<h2>Package Master</h2>
+
+
+<p>
+    @Html.ActionLink("Create Package", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+
+<table id="fixedHeader" class="table custom-table">
+    <thead>
+        <tr>
+            <th>PackageDescription</th>
+            <th>PackageCode</th>
+           <th class="right-align">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+</table>
+ 
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+
+            $('#fixedHeader').on('error.dt', function(e, settings, techNote, message){
+                console.log('An error has been reported by DataTables: ', message );
+                e.preventDefault();
+            });
+
+
+
+            var dt = $('#fixedHeader').DataTable({
+                "processing": true,
+                "serverSide": true,
+               "ajax": {
+                url: "@Url.Action("GetPackageListAjax", "GeneralPackages")",
+                type: "POST"
+            },
+                "columns": [
+
+                    { "data": "PackageDescription" },
+                    { "data": "PackageCode" },
+
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+
+                            var stat = '<div class="td-actions"><a href="@Url.Action("Edit", "GeneralPackages")?id=' + row.PackageId +'" class="icon red" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Record">';
+                            stat += '<i class="icon-circle-with-plus"></i></a>';
+
+                            stat += '<a href="@Url.Action("Details", "GeneralPackages")?id=' + row.PackageId +'" class="icon green" data-toggle="tooltip" data-placement="top" title="" data-original-title="View Record">';
+                            stat += '<i class="icon-save"></i></a>';
+
+                            stat += '<a href="@Url.Action("Delete", "GeneralPackages")?id=' + row.PackageId +'" class="icon blue" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete Record">';
+                            stat += '<i class="icon-cancel"></i></a></div>';
+                            return stat;
+                        }
+
+                    }
+                ],
+                "order": [[0, 'desc']]
+            });
+
+
+            
+
+        });
+
+
+
+
+
+
+
+    </script>
+}
+
+
+

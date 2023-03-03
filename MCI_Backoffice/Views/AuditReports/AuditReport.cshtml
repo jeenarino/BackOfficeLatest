@@ -1,0 +1,266 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+
+}
+<h2>Audit Report</h2>
+
+<div class="container-fluid px-4 pt-4 mb-4">
+
+    <!--<div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="">Reports</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("AuditReport","Reports")">Audit Report</a></li>-->
+    @*<li class="breadcrumb-item active" aria-current="page">View</li>*@
+    <!--</ol>
+        </nav>
+    </div>-->
+    @*<div class="col-12 col-sm-auto">
+            <a class="mb-4 back-btn" href="#" onclick="history.go(-1); return false;"><i class="fas fa-arrow-left"></i>Back</a>
+        </div>*@
+    <!--</div>-->
+    <div class="content-wrap">
+        <div class="row">
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-danger" role="alert" id="divmessage">
+                    @(ViewBag.Message)
+                </div>
+            }
+            <div class="col-lg-12">
+                <form name="AuditReportForm" id="auditReportForm1" method="post" action="@Url.Action("FetchAuditReport","AuditReports")">
+                    <div class="date_picker">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Start Date</label>
+                                <div class="form-icon">
+                                    <span class="icon-append"><i class="far fa-calendar-alt"></i></span>
+                                    <input name="StartDate" id="startDate" type="text" class="form-control datepicker" value="@ViewBag.StartDate">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">End Date</label>
+
+                                <div class="form-icon">
+                                    <span class="icon-append"><i class="far fa-calendar-alt"></i></span>
+                                    <input name="EndDate" id="endDate" type="text" class="form-control datepicker" value="@ViewBag.EndDate">
+                                </div>
+                            </div>
+                            <div class="col-md-3" id="divbutton">
+                                <div class="space30"></div>
+                                <input type="button" name="SubmitButon" id="viewButon" value="View" class="btn btn-primary" />
+                                <input type="submit" name="SubmitButon" id="exportButon" value="Export to PDF" class="btn btn-secondary" />
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+
+                <div class="col-md-12">
+                    <div class="table-responsive cstm-table">
+                        <table id="fixedHeader" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap" scope="col">#</th>
+                                    <th class="text-nowrap" scope="col">Serial #</th>
+                                    <th class="text-nowrap" scope="col">Menu Name</th>
+                                    <th class="text-nowrap" scope="col">User Name</th>
+                                    <th class="text-nowrap" scope="col">Action</th>
+                                    <th class="text-nowrap" scope="col">Date Time</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Assets/vendor/BootstrapDatePicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+    <script>
+
+    $(document).ready(function () {
+
+
+
+
+        var dt = $('#fixedHeader').DataTable({
+
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                url: "@Url.Action("FetchAuditReport", "AuditReports")",
+                type: "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        "StartDate": $('#startDate').val(),
+                        "EndDate": $('#endDate').val(),
+                    });
+                }
+            },
+            "createdRow": function (a, b, c) {
+
+                if (b.DetailsAvailable) {
+                    $(a).find('td:first').addClass('dt-control');
+                }
+            },
+            "columns": [
+                {
+                    "data": function () {
+                        return ""
+                    },
+                },
+                {
+
+                    "data": "AuditHeaderID"
+                },
+                { "data": "ModuleName" },
+                { "data": "UserName" },
+                {
+                    "data": "ActionName",
+                    "render": function (data, type, row) {
+                        if (row.DetailsAvailable) {
+                            return data + '. (please click expand icon to see the details)'
+                        }
+                        else
+                            return data
+                    }
+                },
+                {
+                    "data": "AuditDateTime",
+                    "render": function (data, type, row) {
+                        return formatDateTime(new Date(parseInt(row.AuditDateTime.substr(6))));
+
+                    }
+                }
+
+
+            ],
+            "order": [[5, 'desc']]
+
+        });
+
+
+        $('#fixedHeader tbody').on('click', 'td.dt-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dt.row(tr);
+            //alert(row.data().AuditHeaderID);
+            if (row.data().DetailsAvailable) {
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+
+                    row.child('<span>Loading data Please wait</span>').show();
+                    tr.addClass('shown');
+                    /*console.log(row)*/
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "@Url.Action("GetAuditDetails","AuditReports")",// + "?AuditID=" + row.data().AuditHeaderID,
+                            type: "POST",
+                            data: {
+                                AuditID: row.data().AuditHeaderID
+                            },
+                            success: function (data) {
+                                //Replace child row data.
+                                row.child(data).show();
+                            },
+                            error: function (error) {
+
+                            }
+                        });
+                    }, 1000);
+
+                }
+            }
+        });
+
+
+
+
+
+        $('#fixedHeader').on('error.dt', function (e, settings, techNote, message) {
+                console.log('An error has been reported by DataTables: ', message);
+                e.preventDefault();
+            });
+
+        $('#auditReportForm1').on('submit', function (e) {
+            var butonValue = $("input[type=submit][clicked=true]").val();
+        })
+        $('#viewButon').on('click', function (e) {
+            $('#divmessage').remove();
+            e.preventDefault();
+
+            dt.ajax.reload();
+
+
+
+        })
+        //$("form input[type=submit]").click(function () {
+        //    $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+        //    $(this).attr("clicked", "true");
+        //});
+    });
+
+
+        function formatDateTime(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            hour = d.getHours();
+            min = d.getMinutes();
+            sec = d.getSeconds();
+
+
+
+            if (hour.toString().length < 2)
+                hour = '0' + hour;
+            if (min.toString().length < 2)
+                min = '0' + min;
+            if (sec.toString().length < 2)
+                sec = '0' + sec;
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-') + " " + [hour, min, sec].join(':');
+        }
+    $('.datepicker').datepicker({
+    clearBtn: true,
+    format: "mm/dd/yyyy"
+    });
+    </script>
+}
+
+

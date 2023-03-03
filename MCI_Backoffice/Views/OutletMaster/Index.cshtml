@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+
+}
+
+<h2>Outlet Master</h2>
+
+
+<p>
+    @Html.ActionLink("Create Outlet", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+
+<table id="fixedHeader" class="table custom-table">
+    <thead>
+        <tr>
+
+            <th>Outlet Name</th>
+            <th>Created Date</th>
+            <th class="right-align">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+</table>
+ 
+
+@section Scripts{
+
+    <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+    <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+
+    <script>
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+        $(document).ready(function () {
+
+
+            $('#fixedHeader').on('error.dt', function(e, settings, techNote, message){
+                console.log('An error has been reported by DataTables: ', message );
+                e.preventDefault();
+            });
+
+
+
+            var dt = $('#fixedHeader').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": "@Url.Action("GetOutletListAjax", "OutletMaster")",
+
+                "columns": [
+
+                    { "data": "OutletName" },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                                return formatDate(new Date(parseInt(row.CreatedDateTime.substr(6))));
+                            }
+                        },
+
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+
+                            var stat = '<div class="td-actions"><a href="@Url.Action("Edit","OutletMaster")?id='+ row.OutletID+'" class="icon red" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Record"> ';
+                            stat += '<i class="icon-circle-with-plus"></i> </a>';
+
+                            stat += '<a href="@Url.Action("Details","OutletMaster")?id='+ row.OutletID+'" class="icon green" data-toggle="tooltip" data-placement="top" title="" data-original-title="View Record">';
+                            stat += '<i class="icon-save"></i> </a>';
+
+                            stat += '<a href="@Url.Action("Delete","OutletMaster")?id=' + row.OutletID +'" class="icon blue" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete Record">';
+                            stat += '<i class="icon-cancel" ></i> </a></div>';
+                            return stat;
+                        }
+
+                    }
+                ],
+                "order": [[0, 'desc']]
+            });
+
+
+
+        });
+
+
+
+
+
+
+
+    </script>
+}
+
+
+

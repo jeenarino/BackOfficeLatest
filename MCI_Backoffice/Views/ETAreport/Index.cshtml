@@ -1,0 +1,213 @@
+﻿@using ReportViewerForMvc
+
+@model List<CheckinPortal.BackOffice.DataAccess.usp_GetReservationList_Result>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+
+    <link href="~/Assets/vendor/datatables/dataTables.bs4.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/dataTables.bs4-custom.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/datatables/buttons.bs.css" rel="stylesheet" />
+
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="~/Assets/vendor/BootstrapDatePicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+}
+<h2>ETA Report</h2>
+<div class="container-fluid px-4 pt-4 mb-4">
+    <div class="content-wrap">
+        <div class="row">
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-danger" role="alert" id="divmessage">
+                    @(ViewBag.Message)
+                </div>
+            }
+        <div class="col-lg-12">
+            <form name="ETAReportForm" id="ETAReportForm" method="post" action="@Url.Action("Index","ETAreport")">
+                <div class="date_picker">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Starting Arrival Date</label>
+                            <div class="form-icon">
+                                <span class="icon-append"><i class="far fa-calendar-alt"></i></span>
+                                <input name="StartDate" id="startDate" type="text" class="form-control datepicker" value="@ViewBag.StartDate">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">End Arrival Date</label>
+
+                            <div class="form-icon">
+                                <span class="icon-append"><i class="far fa-calendar-alt"></i></span>
+                                <input name="EndDate" id="endDate" type="text" class="form-control datepicker" value="@ViewBag.EndDate">
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="divbutton">
+                            <div class="space30"></div>
+                            <input type="submit" name="SubmitButon" id="viewButon" value="View" class="btn btn-primary" />
+                            @*<input type="submit" name="SubmitButon" id="exportButon" value="Export to PDF" class="btn btn-secondary" />*@
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+            @if (ViewBag.ReportViewer == null)
+            {
+                <div>No Data is found</div>
+            }
+            else
+            {
+                <div class="report">
+                    @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer, new { @class = "col-xs-12", style = "width:100%", AsyncRendering = "False", SizeToReportContent = "True" })
+                </div>
+
+            }
+
+
+            </div>
+        </div>
+        </div>
+    </div>
+        @section Scripts{
+
+            <script src="~/Assets/vendor/BootstrapDatePicker/js/bootstrap-datepicker.min.js"></script>
+            <script src="~/Assets/vendor/datatables/dataTables.min.js"></script>
+            <script src="~/Assets/vendor/datatables/dataTables.bootstrap.min.js"></script>
+            <script src="~/Assets/vendor/datatables/custom/fixedHeader.js"></script>
+
+
+            <script>
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+                    function formatTime(date) {
+                        var d = new Date(date);
+                           /* alert(d);*/
+                        hour = d.getHours();
+                        min = d.getMinutes();
+                        sec = d.getSeconds();
+
+
+
+                        if (hour.toString().length < 2)
+                            hour = '0' + hour;
+                        if (min.toString().length < 2)
+                            min = '0' + min;
+                        if (sec.toString().length < 2)
+                            sec = '0' + sec;
+
+
+
+                        return [hour, min, sec].join(':');
+                    }
+        $(document).ready(function () {
+
+
+
+
+
+            @*var dt = $('#fixedHeader').DataTable({
+                "searching": false,
+                "bSort": false,
+                "processing": true,
+                "serverSide": true,
+                 "ajax": {
+                url: "@Url.Action("GetReservationListAjax", "ETAreport")",
+                type: "POST",
+                "data": function (d) {
+                    return $.extend({}, d, {
+                        "StartDate": $('#startDate').val(),
+                        "EndDate": $('#endDate').val(),
+                    });
+                }
+            },
+                "columns": [
+                    { "data": "ReservationNumber" },
+
+                    {
+                        "data": "LastName",
+                        "render": function (data, type, row) {
+                            //return row.LastName + (row.FirstName ? row.FirstName : "");
+                            return (row.FirstName ? row.FirstName : '') + (row.MiddleName ?  " " + row.MiddleName : '' )+ ( row.LastName ? " "+row.LastName : '');
+                            //return (row.FirstName ? row.FirstName : '') + ' ' + row.MiddleName ? row.MiddleName : '' + ' ' + row.LastName ? row.LastName : '';
+                        }
+                    },
+                    { "data": "RoomType" },
+                    {
+
+                        "data": "ArrivalDate",
+                        "render": function (data, type, row) {
+                            return formatDate(new Date(parseInt(row.ArrivalDate.substr(6))));
+                        }
+                    },
+                    {
+                        "data": "DepartureDate",
+                        "render": function (data, type, row) {
+                            return formatDate(new Date(parseInt(row.DepartureDate.substr(6))));
+                        }
+                    }
+                    ,
+                    {
+                        "data": "ETA",
+                        "render": function (data, type, row) {
+                            //return formatTime(new Date(parseInt(row.ETA.substr(6))));
+                            return row.ETATime;
+                        }
+                    }
+
+                ],
+                "order": [[1, 'desc']]
+            });
+
+
+            $('#fixedHeader').on('error.dt', function (e, settings, techNote, message) {
+                console.log('An error has been reported by DataTables: ', message);
+                e.preventDefault();
+            });*@
+
+
+            //$('#ETAReportForm').on('submit', function (e) {
+            //    var butonValue = $("input[type=submit][clicked=true]").val();
+            //})
+            //$('#viewButon').on('click', function (e) {
+            //    $('#divmessage').remove();
+            //    e.preventDefault();
+
+            //  /*  dt.ajax.reload();*/
+
+
+
+            //})
+
+        });
+
+        function ShowLoading() {
+            $("#loading-wrapper").fadeIn(300);
+        }
+
+
+
+                $('.datepicker').datepicker({
+                    autoclose: true,
+                        clearBtn: true,
+                        format: "yyyy-mm-dd"
+                    });
+            </script>
+        }
+
+
+
+

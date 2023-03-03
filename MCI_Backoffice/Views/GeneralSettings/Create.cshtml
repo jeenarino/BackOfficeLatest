@@ -1,0 +1,190 @@
+﻿@model CheckinPortal.BackOffice.Models.SmartTap.GeneralSetting
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@{ 
+    var buttontext = "Create";
+    if (Model != null)
+    {
+        if (Model.SettingsId != null)
+        {
+            buttontext = "Update";
+        }
+    }
+}
+
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+    <style>
+        .btn-group
+        {
+            background: #fefcf7;
+            border: 1px solid #e4dacd;
+            width: 100%;
+        }
+
+            .btn-group button
+            {
+                text-align: left;
+            }
+
+        .dropdown-toggle::after
+        {
+            vertical-align: middle;
+            float: right;
+            margin: 7px;
+        }
+    </style>
+}
+
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "GeneralSettings", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>General Settings</h4>
+    @Html.HiddenFor(Model => Model.SettingsId)
+    <hr />
+    <div class="form-group">
+        <div class="row col-md-10">
+            <div class="col-md-3">
+                @Html.Label("General Package", htmlAttributes: new { @class = "control-label col-ms-10" })
+            </div>
+            <div class="col-md-7">
+                @Html.CheckBoxFor(model => model.GeneralPackage, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.GeneralPackage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="row col-md-10">
+            <div class="col-md-3">
+                @Html.Label("General PackageType", htmlAttributes: new { @class = "control-label col-ms-10" })
+            </div>
+            
+            <div class="flexcheckbox">
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.GIsMemberShipLevel, new { htmlAttributes = new { @class = "form-control" } })       @Html.Label("IsMembershipLevel", htmlAttributes: new { @class = "control-label col-md-2" })
+                </div>
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.GIsPackageLevel, new { htmlAttributes = new { @class = "form -control" } })@Html.Label("IsPackageLevel", htmlAttributes: new { @class = "control-label col-md-2" })
+                </div>
+            </div>
+        
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row col-md-10">
+            <div class="col-md-3">
+                @Html.Label("Breakfast Package", htmlAttributes: new { @class = "control-label col-ms-10" })
+            </div>
+            <div class="col-md-7">
+                @Html.CheckBoxFor(model => model.BreakfastPackage, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.BreakfastPackage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        </div>
+   
+    <div class="form-group">
+        <div class="row col-md-10">
+            <div class="col-md-3">
+                @Html.Label("Breakfast PackageType", htmlAttributes: new { @class = "control-label col-ms-10" })
+            </div>
+            <div class="flexcheckbox">
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.BIsMemberShipLevel, new { htmlAttributes = new { @class = "form -control" } })       @Html.Label("IsMembershipLevel", htmlAttributes: new { @class = "control-label col-md-2" })
+                </div> <div class="col-md-3">
+                        @Html.CheckBoxFor(model => model.BIsPackageLevel, new { htmlAttributes = new { @class = "form -control" } })@Html.Label("IsPackageLevel", htmlAttributes: new { @class = "control-label col-md-1" })
+                    </div>
+                </div>
+        </div>
+        </div>
+    <div class="form-group">
+        <div class="row col-md-10">
+            <div class="col-md-3">
+                @Html.Label("Complementary Package", htmlAttributes: new { @class = "control-label col-ms-10" })
+            </div>
+            <div class="col-md-7">
+                @Html.CheckBoxFor(model => model.ComplementaryPackage, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ComplementaryPackage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <div class="row col-md-10">
+            <div class="col-md-3">
+                @Html.Label("Complementary PackageType", htmlAttributes: new { @class = "control-label col-ms-10" })
+            </div>
+            <div class="flexcheckbox">
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.CIsMemberShipLevel, new { htmlAttributes = new { @class = "form -control" } })       @Html.Label("IsMembershipLevel", htmlAttributes: new { @class = "control-label col-md-2" })
+                </div>
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model => model.CIsPackageLevel, new { htmlAttributes = new { @class = "form -control" } })@Html.Label("IsPackageLevel", htmlAttributes: new { @class = "control-label col-md-2" })
+                </div>
+            </div>
+    </div>
+        </div>
+    <div class="form-group">
+
+        @Html.Label("Breakfast ShiftTime", htmlAttributes: new { @class = "control-label col-md-10" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.BreakfastShiftTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.BreakfastShiftTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        @Html.Label("Lunch ShiftTime", htmlAttributes: new { @class = "control-label col-md-10" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.LunchShiftTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.LunchShiftTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        @Html.Label("Dinner ShiftTime", htmlAttributes: new { @class = "control-label col-md-10" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DinnerShiftTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.DinnerShiftTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        @Html.Label("Midnight ShiftTime", htmlAttributes: new { @class = "control-label col-md-10" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.MidnightShiftTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.MidnightShiftTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+
+            <input type="submit" value="@buttontext" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
+   
+    }
+
+   
+
+    @section Scripts {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <script>
+            $(document).ready(function () {
+
+            });
+        </script>
+    }
+
